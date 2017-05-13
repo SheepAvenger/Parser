@@ -1,7 +1,7 @@
 %option noyywrap
 %{
 #include <math.h>
-#include "FP.tab.h"
+#include "y.tab.h"
 
 #define DEBUG 0
 
@@ -45,7 +45,7 @@ SYMBOL      \{|\}|\(|\)|\=|\+|\-|\*|\/|\%|\=\=|\>|\<|\>\=|\<\=|\!\=
 		return print;}
 {BOOLEAN}   {yylval.strval = yytext; printf("Boolean: %s\n", yytext); return Boolean;}
 {ID}        {yylval.strval = yytext; printf("Identifier: %s\n", yytext); return identifier;}
-{STRING}    {yylval.strval = yytext; printf("char-String: %s\n", yytext); return string;}
+{STRING}    {yylval.strval = yytext; printf("char-String: %s\n", yytext); return cString;}
 {SYMBOL}    {yylval.strval = yytext; printf("Special Symbol: %s\n", yytext); if(strcmp(yytext, "{") == 0)
 		return lBracket;
 	else if( strcmp(yytext, "}") == 0)

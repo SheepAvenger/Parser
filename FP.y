@@ -22,17 +22,17 @@ long long key = 0;
     int intval;
     float fltval;
 }
-%token <strval> identifier string Boolean
+%token <strval> identifier cString Boolean
 %token <intval> integer
 %token <fltval> Float
 %token <strval> lBracket
-%token <strval>  rBracket lParen rParen equal plus minus mult divide mod equalTo greater less gEqual lEqual notEqual
+%token <strval> rBracket lParen rParen equal plus minus mult divide mod equalTo greater less gEqual lEqual notEqual
 %token <strval> prog func ret iif then els whle doo and or print 
 %right "then" "else"
 %%
 program: 
     lBracket key_word program_name function_definitions statements rBracket	{printf("\nstart\n");}
-     ;
+    ;
 
 key_word:
 	prog		{printf("\nkey_word: %s\n\n\n", $1);}
@@ -48,7 +48,7 @@ program_name:
     identifier	{printf("\nprogram-name %s\n\n\n", $1);};
 
 function_definitions: 
-    function_definition function_definitions	{printf("\nfunction-definitions\n\n\n");}
+    function_definitions function_definition    {printf("\nfunction-definitions\n\n\n");}
     | ;
 function_definition:
     lBracket key_word function_name arguments statements ret return_arg rBracket	{printf("\nfunction-definition\n\n\n");}
@@ -57,7 +57,7 @@ function_name:
     identifier	{printf("\nfunction-name %s\n\n\n", $1);}
     ;
 arguments: 
-    argument arguments	{printf("\narguments\n\n\n");}
+    arguments argument  {printf("\narguments\n\n\n");}
     | ;
 argument: 
     identifier	{printf("\nargument %s\n\n\n", $1);}
@@ -67,39 +67,40 @@ return_arg:
     |
     ;
 statements: 
-    lBracket statement statements	{printf("\nstatements\n\n\n");}
-    | ;
+    statements statement   {printf("\nstatements\n\n\n");}
+    | statement	            {printf("\nstatement\n\n\n");}
+    ;
 statement:
-    equal identifier parameters rBracket	{printf("\nassignment_stmt\n\n\n");}
+    lBracket equal identifier parameters rBracket	{printf("\nassignment_stmt\n\n\n");}
     | lBracket predefined_function parameters rBracket	{printf("\nfunction_call2\n\n\n");}
-    | iif expression then statements els statements rBracket	{printf("\nif_stmt\n\n\n");}
-    | whle expression doo statements rBracket	{printf("\nwhile_stmt\n\n\n");}
+    | lBracket iif expression then statements els statements rBracket	{printf("\nif_stmt\n\n\n");}
+    | lBracket whle expression doo statements rBracket	{printf("\nwhile_stmt\n\n\n");}
     | lBracket function_name parameters rBracket 	{printf("\nfunction_call1\n\n\n");}
-    | string rBracket		{printf("\nstring literal\n\n\n");}
+    /*| cString rBracket		{printf("\nstring literal\n\n\n");}*/
     ;
 predefined_function: 
-    plus 	{printf("\nplus\n\n\n");}
+    plus 	    {printf("\nplus\n\n\n");}
     | minus 	{printf("\nminus\n\n\n");}
-    | mult 	{printf("\nmult\n\n\n");}
+    | mult 	    {printf("\nmult\n\n\n");}
     | divide 	{printf("\ndivide\n\n\n");}
-    | mod 	{printf("\nmod\n\n\n");}
-    | print	{printf("\nprint\n\n\n");}
+    | mod 	    {printf("\nmod\n\n\n");}
+    | print	    {printf("\nprint\n\n\n");}
     ;
 parameters: 
-    parameter parameters	{printf("\nparameters\n\n\n");}
+    parameters parameter   {printf("\nparameters\n\n\n");}
     | 
     ;
 parameter: 
     lBracket function_name parameters rBracket 	{printf("\nparameter1\n\n\n");}
     | identifier 	{printf("\nparameter: %s\n\n\n", $1);}
     | number 		{printf("\nparameter3\n\n\n");}
-    | string 		{printf("\nparameter: %s\n\n\n", $1);}
+    | cString 		{printf("\nparameter: %s\n\n\n", $1);}
     | Boolean		{printf("\nparameter: %s\n\n\n", $1);}
     | lBracket predefined_function parameters rBracket	{printf("\nparameter6\n\n\n");}
     ;
 number: 
     integer 	{printf("\nnumber1: %i\n\n\n", $1);}
-    | Float	{printf("\nnumber2: %f\n\n\n", $1);}
+    | Float	    {printf("\nnumber2: %f\n\n\n", $1);}
     ;
 
 expression: 
@@ -110,13 +111,13 @@ expression:
 comparison_operator: 
     equalTo 	{printf("\noperator: %s\n\n\n", $1);}
     | greater 	{printf("\noperator: %s\n\n\n", $1);}
-    | less 	{printf("\noperator: %s\n\n\n", $1);}
+    | less 	    {printf("\noperator: %s\n\n\n", $1);}
     | gEqual 	{printf("\noperator: %s\n\n\n", $1);}
     | lEqual 	{printf("\noperator: %s\n\n\n", $1);}
     | notEqual	{printf("\noperator: %s\n\n\n", $1);}
     ;
 Boolean_operator: 
-    or 	{printf("\noperator: %s\n\n\n", $1);}
+    or 	    {printf("\noperator: %s\n\n\n", $1);}
     | and	{printf("\noperator: %s\n\n\n", $1);}
     ;
 %%
@@ -151,7 +152,7 @@ void main()
 	printf("t %i\n", t);
     } while(!feof(yyin));
 	fclose(yyin);
-   printf("\n========= Finished reading the input file =========\n");
+    printf("\n========= Finished reading the input file =========\n");
 	symbolTable.display(symbolTable.head, prime);  
     printf("\n");    
     activeBlock.printStack(activeBlock.head, "Active Block");
