@@ -9,7 +9,7 @@
 
 #define DEBUG 0
 
-void bildST(char*, char*);
+void buildST(char*, char*);
 
 struct Hash symbolTable = {NULL, insertToHash, display, setSize, hashkey, findInScope, findInGlobal};
 struct Stack activeBlock = {NULL, push, pop, printStack, peek};

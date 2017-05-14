@@ -62,7 +62,7 @@ return_arg:
     ;
 statements: 
     statements statement   {printf("\nstatements\n\n\n");}
-    | statement	            {printf("\nstatement\n\n\n");}
+    | statement	            {printf("\nstatement\n\n\n");} 
     ;
 statement:
     lBracket equal identifier parameters rBracket	{printf("\nassignment_stmt\n\n\n");}
