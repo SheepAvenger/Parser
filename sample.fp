@@ -33,8 +33,8 @@
 		}
 	return lst
 	}
-    {= myStrng (I like lex and yacc)}
+    {= myStrn (I like lex and yacc)}
     {print {facto 999}}
     {print {rtrn 7 5}}
-    {print {getEle 2 {= list (abcd)}}}
+    {print {getEle 2 (abc)}}
 }
