@@ -1,19 +1,13 @@
 %{
 #include <stdio.h>
-#include "stack.h"
-#include "hash.h"
+//#include "scanner.l"
+#include "bTree.h"
 #define DEBUG 1
 
-int isPrime(int p);
-void buildST(char* string, char* type);
+//int isPrime(int p);
 int yylex();
 int yyerror(char*);
-
-struct Hash symbolTable = {NULL, insertToHash, display, setSize, hashkey, findInScope, findInGlobal};
-struct Stack activeBlock = {NULL, push, pop, printStack, peek};
-struct node* myNode;
-int prime, scope = 0;
-long long key = 0;
+//int myPrime;
 
 //int yyerror(const char *p) { return -1; }
 %}
@@ -69,6 +63,7 @@ return_arg:
 statements: 
     statements statement   {printf("\nstatements\n\n\n");}
     | statement	            {printf("\nstatement\n\n\n");}
+    | 
     ;
 statement:
     lBracket equal identifier parameters rBracket	{printf("\nassignment_stmt\n\n\n");}
@@ -76,7 +71,7 @@ statement:
     | lBracket iif expression then statements els statements rBracket	{printf("\nif_stmt\n\n\n");}
     | lBracket whle expression doo statements rBracket	{printf("\nwhile_stmt\n\n\n");}
     | lBracket function_name parameters rBracket 	{printf("\nfunction_call1\n\n\n");}
-    /*| cString rBracket		{printf("\nstring literal\n\n\n");}*/
+    | lBracket cString rBracket		{printf("\nstring literal\n\n\n");}
     ;
 predefined_function: 
     plus 	    {printf("\nplus\n\n\n");}
@@ -121,114 +116,6 @@ Boolean_operator:
     | and	{printf("\noperator: %s\n\n\n", $1);}
     ;
 %%
-void main()
-{
-    //extern FILE *yyin;
-    FILE *yyin = stdin;
-    long int size;
-    fseek(yyin, 1, SEEK_END);
-	printf("point 1\n");
-    size = ftell(yyin);
-    rewind(yyin);
-    if(size > 271)
-    {
-        size /= 16;
-        prime = size -1;
-        for(; ; prime--)
-        {
-            if(isPrime(prime))
-            break;
-        }
-    }
-    else
-        prime = 13; // default prime for file size smaller than 272
-    if(DEBUG) {printf("Prime: %d\n\n", prime);}    
-    
-    //symbolTable.head = symbolTable.setSize(symbolTable.head, prime);
-    symbolTable.setSize(&symbolTable.head, prime);
-    //yylex();
-    do {
-        int t = yyparse();
-	printf("t %i\n", t);
-    } while(!feof(yyin));
-	fclose(yyin);
-    printf("\n========= Finished reading the input file =========\n");
-	symbolTable.display(symbolTable.head, prime);  
-    printf("\n");    
-    activeBlock.printStack(activeBlock.head, "Active Block");
-}
-void buildST(char* string, char* type)
-{    
-    if(DEBUG){printf("Read %s, ", string);}      
-    if(strcmp(string, "{") == 0)
-    {
-        //activeBlock.head = activeBlock.push(activeBlock.head, scope);
-		 activeBlock.push(&activeBlock.head, scope);
-        if(DEBUG)
-        {
-            printf("Scope %d pushed.\n", scope);
-            activeBlock.printStack(activeBlock.head, "Active Block");
-            printf("\n");
-        }
-        scope++;
-    }
-    else if(strcmp(string, "}") == 0)
-    {
-        //int scope = activeBlock.peek(activeBlock.head);
-        //activeBlock.head = activeBlock.pop(activeBlock.head);
-		 int scope = activeBlock.pop(&activeBlock.head);
-        if(DEBUG)
-        {
-            printf("Scope %d popped.\n", scope);
-            activeBlock.printStack(activeBlock.head, "Active Block");
-            printf("\n");
-        }
-    }
-    else
-    {
-        key = symbolTable.hashkey(string, prime);
-        if(DEBUG){printf("hashkey %lli, ", key);}
-
-        if((myNode = symbolTable.findInScope(symbolTable.head, string, activeBlock.peek(activeBlock.head) , key)) == NULL)
-        {
-            // not found in current scope
-            if(DEBUG){printf("not found in current, ");}
-            if((myNode = symbolTable.findInGlobal(symbolTable.head, activeBlock.head, string, key)) == NULL)
-            {
-                // not found in global scope
-                symbolTable.insertToHash(symbolTable.head, string, type, activeBlock.peek(activeBlock.head), key);
-                if(DEBUG)
-                {
-                    printf("not found in global, ");
-                    printf("insert to ST.");
-                    symbolTable.display(symbolTable.head, prime); 
-                    printf("\n");
-                }
-            }
-            else
-            {
-                // found in global scope
-                if(DEBUG){printf("found in global scope %d, won't insert.\n", myNode->scope);}
-            }
-        }
-        else
-        {
-            // found in current scope
-            if(DEBUG){printf("found in current scope %d, won't insert.\n", activeBlock.peek(activeBlock.head));}
-        }
-    }
-}
-
-//check for prime numbers
-int isPrime(int p)
-{
-    int i;
-    for(i = 2; p%i != 0; i++);
-    if(p==i)
-        return 1;
-    else
-        return 0;
-}
 int yyerror(char *s)
 {
 	return -1;
