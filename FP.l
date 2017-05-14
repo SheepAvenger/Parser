@@ -1,9 +1,23 @@
 %option noyywrap
 %{
 #include <math.h>
+#include <stdio.h>
+#include"scanner.h"
 #include "FP.tab.h"
+#include "stack.h"
+#include "hash.h"
 
 #define DEBUG 0
+
+void bildST(char*, char*);
+
+struct Hash symbolTable = {NULL, insertToHash, display, setSize, hashkey, findInScope, findInGlobal};
+struct Stack activeBlock = {NULL, push, pop, printStack, peek};
+struct node* myNode;
+
+int prime, scope = 0;
+long long key = 0;
+int prime = 0;
 
 %}
 /* 1.2 identifier, integer, float, character-string, Boolean */
@@ -19,9 +33,9 @@ SPACE       [ \t\r\n]+
 KEYWORD     Program|Function|return|if|then|else|while|do|or|and|print
 SYMBOL      \{|\}|\(|\)|\=|\+|\-|\*|\/|\%|\=\=|\>|\<|\>\=|\<\=|\!\=
 %%
-{INT}       {char *ptr; yylval.intval = strtoul(yytext, &ptr, 10); printf("Integer: %s\n", yytext); return integer;}
-{FLOAT}     {yylval.fltval = atof(yytext); printf("Float: %s\n", yytext); return Float;}
-{KEYWORD}   {yylval.strval = yytext; printf("Keyword: %s\n", yytext);  if( strcmp(yytext, "Program") == 0)
+{INT}       {char *ptr; yylval.intval = strtoul(yytext, &ptr, 10); printf("Integer: %s\n", yytext); buildST(yytext, "Integer"); return integer;}
+{FLOAT}     {yylval.fltval = atof(yytext); printf("Float: %s\n", yytext); buildST(yytext, "Float"); return Float;}
+{KEYWORD}   {yylval.strval = yytext; printf("Keyword: %s\n", yytext); buildST(yytext, "KeyWord"); if( strcmp(yytext, "Program") == 0)
 		return prog;
 	else if( strcmp(yytext, "Function") == 0)
 		return func;
@@ -43,10 +57,10 @@ SYMBOL      \{|\}|\(|\)|\=|\+|\-|\*|\/|\%|\=\=|\>|\<|\>\=|\<\=|\!\=
 		return and;
 	else if( strcmp(yytext, "print") == 0)
 		return print;}
-{BOOLEAN}   {yylval.strval = yytext; printf("Boolean: %s\n", yytext); return Boolean;}
-{ID}        {yylval.strval = yytext; printf("Identifier: %s\n", yytext); return identifier;}
-{STRING}    {yylval.strval = yytext; printf("char-String: %s\n", yytext); return string;}
-{SYMBOL}    {yylval.strval = yytext; printf("Special Symbol: %s\n", yytext); if(strcmp(yytext, "{") == 0)
+{BOOLEAN}   {yylval.strval = yytext; printf("Boolean: %s\n", yytext); buildST(yytext, "Boolean"); return Boolean;}
+{ID}        {yylval.strval = yytext; printf("Identifier: %s\n", yytext); buildST(yytext, "Identifier"); return identifier;}
+{STRING}    {yylval.strval = yytext; printf("char-String: %s\n", yytext); buildST(yytext, "Char-String"); return cString;}
+{SYMBOL}    {yylval.strval = yytext; printf("Special Symbol: %s\n", yytext); buildST(yytext, "Special Symbol"); if(strcmp(yytext, "{") == 0)
 		return lBracket;
 	else if( strcmp(yytext, "}") == 0)
 		return rBracket;
@@ -81,3 +95,80 @@ SYMBOL      \{|\}|\(|\)|\=|\+|\-|\*|\/|\%|\=\=|\>|\<|\>\=|\<\=|\!\=
 {SPACE}     /* skip whitespace */
 {UNDEFINED} printf("Unrecognized: %s\n",yytext);
 %%
+void buildST(char* string, char* type)
+{    
+    if(DEBUG){printf("Read %s, ", string);}      
+    if(strcmp(string, "{") == 0)
+    {
+        //activeBlock.head = activeBlock.push(activeBlock.head, scope);
+		 activeBlock.push(&activeBlock.head, scope);
+        if(DEBUG)
+        {
+            printf("Scope %d pushed.\n", scope);
+            activeBlock.printStack(activeBlock.head, "Active Block");
+            printf("\n");
+        }
+        scope++;
+    }
+    else if(strcmp(string, "}") == 0)
+    {
+        //int scope = activeBlock.peek(activeBlock.head);
+        //activeBlock.head = activeBlock.pop(activeBlock.head);
+		 int scope = activeBlock.pop(&activeBlock.head);
+        if(DEBUG)
+        {
+            printf("Scope %d popped.\n", scope);
+            activeBlock.printStack(activeBlock.head, "Active Block");
+            printf("\n");
+        }
+    }
+    else
+    {
+        key = symbolTable.hashkey(string, prime);
+        if(DEBUG){printf("hashkey %lli, ", key);}
+
+        if((myNode = symbolTable.findInScope(symbolTable.head, string, activeBlock.peek(activeBlock.head) , key)) == NULL)
+        {
+            // not found in current scope
+            if(DEBUG){printf("not found in current, ");}
+            if((myNode = symbolTable.findInGlobal(symbolTable.head, activeBlock.head, string, key)) == NULL)
+            {
+                // not found in global scope
+                symbolTable.insertToHash(symbolTable.head, string, type, activeBlock.peek(activeBlock.head), key);
+                if(DEBUG)
+                {
+                    printf("not found in global, ");
+                    printf("insert to ST.");
+                    symbolTable.display(symbolTable.head, prime); 
+                    printf("\n");
+                }
+            }
+            else
+            {
+                // found in global scope
+                if(DEBUG){printf("found in global scope %d, won't insert.\n", myNode->scope);}
+            }
+        }
+        else
+        {
+            // found in current scope
+            if(DEBUG){printf("found in current scope %d, won't insert.\n", activeBlock.peek(activeBlock.head));}
+        }
+    }
+}
+
+void createTable(int myPrime)
+{
+	prime = myPrime;
+	symbolTable.setSize(&symbolTable.head, prime);
+	symbolTable.setSize(&symbolTable.head, prime);
+}
+void printTable()
+{
+	symbolTable.display(symbolTable.head, prime);
+}
+void printBlocks()
+{
+	activeBlock.printStack(activeBlock.head, "Active Block");
+}
+
