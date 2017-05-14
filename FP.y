@@ -71,7 +71,6 @@ statement:
     | lBracket iif expression then statements els statements rBracket	{printf("\nif_stmt\n\n\n");}
     | lBracket whle expression doo statements rBracket	{printf("\nwhile_stmt\n\n\n");}
     | lBracket function_name parameters rBracket 	{printf("\nfunction_call1\n\n\n");}
-    | lBracket cString rBracket		{printf("\nstring literal\n\n\n");}
     ;
 predefined_function: 
     plus 	    {printf("\nplus\n\n\n");}
