@@ -22,37 +22,28 @@ int yyerror(char*);
 %token <strval> lBracket
 %token <strval> rBracket lParen rParen equal plus minus mult divide mod equalTo greater less gEqual lEqual notEqual
 %token <strval> prog func ret iif then els whle doo and or print 
-%right "then" "else"
+//%right "then" "else"
 %%
 program: 
-    lBracket key_word program_name function_definitions statements rBracket	{printf("\nstart\n");}
+    lBracket prog program_name function_definitions statements rBracket	{printf("\nstart\n");}
     ;
-
-key_word:
-	prog		{printf("\nkey_word: %s\n\n\n", $1);}
-	| func 		{printf("\nkey_word: %s\n\n\n", $1);}
-	| ret		{printf("\nkey_word: %s\n\n\n", $1);}
-	| iif 		{printf("\nkey_word: %s\n\n\n", $1);}
-	| then		{printf("\nkey_word: %s\n\n\n", $1);}
-	| els		{printf("\nkey_word: %s\n\n\n", $1);}
-	| whle		{printf("\nkey_word: %s\n\n\n", $1);}
-	| doo		{printf("\nkey_word: %s\n\n\n", $1);}
-	;
 program_name: 
-    identifier	{printf("\nprogram-name %s\n\n\n", $1);};
-
+    identifier	{printf("\nprogram-name %s\n\n\n", $1);}
+    ;
 function_definitions: 
     function_definitions function_definition    {printf("\nfunction-definitions\n\n\n");}
-    | ;
+    | 
+    ;
 function_definition:
-    lBracket key_word function_name arguments statements ret return_arg rBracket	{printf("\nfunction-definition\n\n\n");}
+    lBracket func function_name arguments statements ret return_arg rBracket	{printf("\nfunction-definition\n\n\n");}
     ;
 function_name: 
     identifier	{printf("\nfunction-name %s\n\n\n", $1);}
     ;
 arguments: 
     arguments argument  {printf("\narguments\n\n\n");}
-    | ;
+    | 
+    ;
 argument: 
     identifier	{printf("\nargument %s\n\n\n", $1);}
     ;
@@ -92,8 +83,8 @@ parameter:
     | lBracket predefined_function parameters rBracket	{printf("\nparameter6\n\n\n");}
     ;
 number: 
-    integer 	{printf("\nnumber1: %i\n\n\n", $1);}
-    | Float	    {printf("\nnumber2: %f\n\n\n", $1);}
+    integer 	{printf("\nnumber1: %i\n\n\n", $1); $$ = $1;}
+    | Float	    {printf("\nnumber2: %f\n\n\n", $1); $$ = $1;}
     ;
 
 expression: 
@@ -102,7 +93,7 @@ expression:
     | Boolean	{printf("\nexpression3\n\n\n");}
     ;
 comparison_operator: 
-    equalTo 	{printf("\noperator: %s\n\n\n", $1);}
+    equalTo 	{printf("\noperator: %s\n\n\n", $1); }
     | greater 	{printf("\noperator: %s\n\n\n", $1);}
     | less 	    {printf("\noperator: %s\n\n\n", $1);}
     | gEqual 	{printf("\noperator: %s\n\n\n", $1);}
@@ -110,12 +101,13 @@ comparison_operator:
     | notEqual	{printf("\noperator: %s\n\n\n", $1);}
     ;
 Boolean_operator: 
-    or 	    {printf("\noperator: %s\n\n\n", $1);}
-    | and	{printf("\noperator: %s\n\n\n", $1);}
+    or 	    {printf("\noperator: %s\n\n\n", $1); $$ = $1;}
+    | and	{printf("\noperator: %s\n\n\n", $1); $$ = $1;}
     ;
 %%
 int yyerror(char *s)
 {
+    //fprintf(stdout, "%s\n", s);
 	return -1;
     /* Don't have to do anything! */
 }
