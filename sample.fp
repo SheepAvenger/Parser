@@ -24,8 +24,8 @@
 
 	{Function getEle index lst
       		{if {!= index lst}
-       		then {(pound f)}
-		else {(pound t)}
+       		then {= result (pound f)}
+		else {= result (pound t)}
       		}
       		{if {== index 1}
         	 then {= lst lst-1}
