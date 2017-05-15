@@ -25,95 +25,95 @@ int yyerror(char*);
 //%right "then" "else"
 %%
 program: 
-    lBracket prog program_name function_definitions statements rBracket {printf("\nstart\n");}
+    lBracket prog program_name function_definitions statements rBracket {if(DEBUG){printf("\nstart\n");};}
     | error {printf("Failure :-(\n"); yyerrok; yyclearin;}
     ;
 program_name: 
-    identifier  {printf("\nprogram-name %s\n\n\n", $1);}
+    identifier  {if(DEBUG){printf("\nprogram-name %s\n\n\n", $1);};}
     | error {printf("Failure :-(\n"); yyerrok; yyclearin;}
     ;
 function_definitions: 
-    function_definitions function_definition    {printf("\nfunction-definitions\n\n\n");}
+    function_definitions function_definition    {if(DEBUG){printf("\nfunction-definitions\n\n\n");};}
     | 
     ;
 function_definition:
-    lBracket func function_name arguments statements ret return_arg rBracket    {printf("\nfunction-definition\n\n\n");}
+    lBracket func function_name arguments statements ret return_arg rBracket    {if(DEBUG){printf("\nfunction-definition\n\n\n");};}
     ;
 function_name: 
-    identifier  {printf("\nfunction-name %s\n\n\n", $1);}
+    identifier  {if(DEBUG){printf("\nfunction-name %s\n\n\n", $1);};}
     | error {printf("Failure :-(\n"); yyerrok; yyclearin;}
     ;
 arguments: 
-    arguments argument  {printf("\narguments\n\n\n");}
+    arguments argument  {if(DEBUG){printf("\narguments\n\n\n");};}
     | 
     ;
 argument: 
-    identifier  {printf("\nargument %s\n\n\n", $1);}
+    identifier  {if(DEBUG){printf("\nargument %s\n\n\n", $1);};}
     ;
 return_arg: 
-    identifier  {printf("\nreturn-arg %s\n\n\n", $1);}
+    identifier  {if(DEBUG){printf("\nreturn-arg %s\n\n\n", $1);};}
     | 
     | error {printf("Failure :-(\n"); yyerrok; yyclearin;}
     ;
 statements: 
-    statements statement    {printf("\nstatements\n\n\n");}
-    | statement             {printf("\nstatement\n\n\n");} 
+    statements statement    {if(DEBUG){printf("\nstatements\n\n\n");};}
+    | statement             {if(DEBUG){printf("\nstatement\n\n\n");};} 
     | error {printf("Failure :-(\n"); yyerrok; yyclearin;}
     ;
 statement:
-    lBracket equal identifier parameters rBracket       {printf("\nassignment_stmt\n\n\n");}
-    | lBracket predefined_function parameters rBracket  {printf("\nfunction_call2\n\n\n");}
-    | lBracket iif expression then statements els statements rBracket   {printf("\nif_stmt\n\n\n");}
-    | lBracket whle expression doo statements rBracket  {printf("\nwhile_stmt\n\n\n");}
-    | lBracket function_name parameters rBracket        {printf("\nfunction_call1\n\n\n");}
+    lBracket equal identifier parameters rBracket       {if(DEBUG){printf("\nassignment_stmt\n\n\n");};}
+    | lBracket predefined_function parameters rBracket  {if(DEBUG){printf("\nfunction_call2\n\n\n");};}
+    | lBracket iif expression then statements els statements rBracket   {if(DEBUG){printf("\nif_stmt\n\n\n");};}
+    | lBracket whle expression doo statements rBracket  {if(DEBUG){printf("\nwhile_stmt\n\n\n");};}
+    | lBracket function_name parameters rBracket        {if(DEBUG){printf("\nfunction_call1\n\n\n");};}
     ;
 predefined_function: 
-    plus 	    {printf("\nplus\n\n\n");}
-    | minus 	{printf("\nminus\n\n\n");}
-    | mult 	    {printf("\nmult\n\n\n");}
-    | divide 	{printf("\ndivide\n\n\n");}
-    | mod 	    {printf("\nmod\n\n\n");}
-    | print	    {printf("\nprint\n\n\n");}
+    plus 	    {if(DEBUG){printf("\nplus\n\n\n");};}
+    | minus 	{if(DEBUG){printf("\nminus\n\n\n");};}
+    | mult 	    {if(DEBUG){printf("\nmult\n\n\n");};}
+    | divide 	{if(DEBUG){printf("\ndivide\n\n\n");};}
+    | mod 	    {if(DEBUG){printf("\nmod\n\n\n");};}
+    | print	    {if(DEBUG){printf("\nprint\n\n\n");};}
     ;
 parameters: 
-    parameters parameter   {printf("\nparameters\n\n\n");}
+    parameters parameter   {if(DEBUG){printf("\nparameters\n\n\n");};}
     | 
     | error {printf("Failure :-(\n"); yyerrok; yyclearin;}
     ;
 parameter: 
-    lBracket function_name parameters rBracket          {printf("\nparameter1\n\n\n");}
-    | identifier    {printf("\nparameter: %s\n\n\n", $1);}
-    | number        {printf("\nparameter3\n\n\n");}
-    | cString       {printf("\nparameter: %s\n\n\n", $1);}
-    | Boolean       {printf("\nparameter: %s\n\n\n", $1);}
-    | lBracket predefined_function parameters rBracket  {printf("\nparameter6\n\n\n");}
+    lBracket function_name parameters rBracket          {if(DEBUG){printf("\nparameter1\n\n\n");};}
+    | identifier    {if(DEBUG){printf("\nparameter: %s\n\n\n", $1);};}
+    | number        {if(DEBUG){printf("\nparameter3\n\n\n");};}
+    | cString       {if(DEBUG){printf("\nparameter: %s\n\n\n", $1);};}
+    | Boolean       {if(DEBUG){printf("\nparameter: %s\n\n\n", $1);};}
+    | lBracket predefined_function parameters rBracket  {if(DEBUG){printf("\nparameter6\n\n\n");};}
     ;
 number: 
-    integer     {printf("\nnumber1: %i\n\n\n", $1);}
-    | Float     {printf("\nnumber2: %f\n\n\n", $1);}
+    integer     {if(DEBUG){printf("\nnumber1: %i\n\n\n", $1);};}
+    | Float     {if(DEBUG){printf("\nnumber2: %f\n\n\n", $1);};}
     ;
 expression: 
-    lBracket comparison_operator parameter parameter rBracket   {printf("\nexpression1\n\n\n");}
-    | lBracket Boolean_operator expression expression rBracket  {printf("\nexpression2\n\n\n");}
-    | Boolean   {printf("\nexpression3\n\n\n");}
+    lBracket comparison_operator parameter parameter rBracket   {if(DEBUG){printf("\nexpression1\n\n\n");};}
+    | lBracket Boolean_operator expression expression rBracket  {if(DEBUG){printf("\nexpression2\n\n\n");};}
+    | Boolean   {if(DEBUG){printf("\nexpression3\n\n\n");};}
     | error {printf("Failure :-(\n"); yyerrok; yyclearin;}
     ;
 comparison_operator: 
-    equalTo     {printf("\noperator: %s\n\n\n", $1);}
-    | greater   {printf("\noperator: %s\n\n\n", $1);}
-    | less      {printf("\noperator: %s\n\n\n", $1);}
-    | gEqual    {printf("\noperator: %s\n\n\n", $1);}
-    | lEqual    {printf("\noperator: %s\n\n\n", $1);}
-    | notEqual  {printf("\noperator: %s\n\n\n", $1);}
+    equalTo     {if(DEBUG){printf("\noperator: %s\n\n\n", $1);};}
+    | greater   {if(DEBUG){printf("\noperator: %s\n\n\n", $1);};}
+    | less      {if(DEBUG){printf("\noperator: %s\n\n\n", $1);};}
+    | gEqual    {if(DEBUG){printf("\noperator: %s\n\n\n", $1);};}
+    | lEqual    {if(DEBUG){printf("\noperator: %s\n\n\n", $1);};}
+    | notEqual  {if(DEBUG){printf("\noperator: %s\n\n\n", $1);};}
     ;
 Boolean_operator: 
-    or      {printf("\noperator: %s\n\n\n", $1);}
-    | and   {printf("\noperator: %s\n\n\n", $1);}
+    or      {if(DEBUG){printf("\noperator: %s\n\n\n", $1);};}
+    | and   {if(DEBUG){printf("\noperator: %s\n\n\n", $1);};}
     ;
 %%
 int yyerror(char *s)
 {
-    //fprintf(stdout, "%s\n", s);
+    //fif(DEBUG){printf(stdout, "%s\n", s);
 	return -1;
     /* Don't have to do anything! */
 }

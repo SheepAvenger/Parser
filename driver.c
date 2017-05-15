@@ -37,7 +37,7 @@ void main()
 	printf("t %i\n", t);
     } while(!feof(yyin));
 	fclose(yyin);
-   printf("\n========= Finished reading the input file =========\n");
+    printf("\n========= Finished reading the input file =========\n");
 	printTable();
 	  
     printf("\n");   

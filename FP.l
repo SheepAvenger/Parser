@@ -2,12 +2,12 @@
 %{
 #include <math.h>
 #include <stdio.h>
-#include"scanner.h"
+#include "scanner.h"
 #include "FP.tab.h"
 #include "stack.h"
 #include "hash.h"
 
-#define DEBUG 0
+#define DEBUG 1
 
 void buildST(char*, char*);
 
@@ -33,9 +33,9 @@ SPACE       [ \t\r\n]+
 KEYWORD     Program|Function|return|if|then|else|while|do|or|and|print
 SYMBOL      \{|\}|\(|\)|\=|\+|\-|\*|\/|\%|\=\=|\>|\<|\>\=|\<\=|\!\=
 %%
-{INT}       {char *ptr; yylval.intval = strtoul(yytext, &ptr, 10); printf("Integer: %s\n", yytext); buildST(yytext, "Integer"); return integer;}
-{FLOAT}     {yylval.fltval = atof(yytext); printf("Float: %s\n", yytext); buildST(yytext, "Float"); return Float;}
-{KEYWORD}   {yylval.strval = yytext; printf("Keyword: %s\n", yytext); buildST(yytext, "KeyWord"); if( strcmp(yytext, "Program") == 0)
+{INT}       {char *ptr; yylval.intval = strtoul(yytext, &ptr, 10); if(DEBUG){printf("Integer: %s\n", yytext);}; buildST(yytext, "Integer"); return integer;}
+{FLOAT}     {yylval.fltval = atof(yytext); if(DEBUG){printf("Float: %s\n", yytext);}; buildST(yytext, "Float"); return Float;}
+{KEYWORD}   {yylval.strval = yytext; if(DEBUG){printf("Keyword: %s\n", yytext);}; buildST(yytext, "KeyWord"); if( strcmp(yytext, "Program") == 0)
 		return prog;
 	else if( strcmp(yytext, "Function") == 0)
 		return func;
@@ -57,10 +57,10 @@ SYMBOL      \{|\}|\(|\)|\=|\+|\-|\*|\/|\%|\=\=|\>|\<|\>\=|\<\=|\!\=
 		return and;
 	else if( strcmp(yytext, "print") == 0)
 		return print;}
-{BOOLEAN}   {yylval.strval = yytext; printf("Boolean: %s\n", yytext); buildST(yytext, "Boolean"); return Boolean;}
-{ID}        {yylval.strval = yytext; printf("Identifier: %s\n", yytext); buildST(yytext, "Identifier"); return identifier;}
-{STRING}    {yylval.strval = yytext; printf("char-String: %s\n", yytext); buildST(yytext, "Char-String"); return cString;}
-{SYMBOL}    {yylval.strval = yytext; printf("Special Symbol: %s\n", yytext); buildST(yytext, "Special Symbol"); if(strcmp(yytext, "{") == 0)
+{BOOLEAN}   {yylval.strval = yytext; if(DEBUG){printf("Boolean: %s\n", yytext);}; buildST(yytext, "Boolean"); return Boolean;}
+{ID}        {yylval.strval = yytext; if(DEBUG){printf("Identifier: %s\n", yytext);}; buildST(yytext, "Identifier"); return identifier;}
+{STRING}    {yylval.strval = yytext; if(DEBUG){printf("char-String: %s\n", yytext);}; buildST(yytext, "Char-String"); return cString;}
+{SYMBOL}    {yylval.strval = yytext; if(DEBUG){printf("Special Symbol: %s\n", yytext);}; buildST(yytext, "Special Symbol"); if(strcmp(yytext, "{") == 0)
 		return lBracket;
 	else if( strcmp(yytext, "}") == 0)
 		return rBracket;
@@ -93,7 +93,7 @@ SYMBOL      \{|\}|\(|\)|\=|\+|\-|\*|\/|\%|\=\=|\>|\<|\>\=|\<\=|\!\=
 	else if( strcmp(yytext, "!=") == 0)
 		return notEqual;}
 {SPACE}     /* skip whitespace */
-{UNDEFINED} printf("Unrecognized: %s\n",yytext);
+{UNDEFINED} {if(DEBUG){printf("Unrecognized: %s\n",yytext);}};
 %%
 void buildST(char* string, char* type)
 {    
