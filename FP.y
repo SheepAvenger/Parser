@@ -26,9 +26,11 @@ int yyerror(char*);
 %%
 program: 
     lBracket prog program_name function_definitions statements rBracket {printf("\nstart\n");}
+    | error {printf("Failure :-(\n"); yyerrok; yyclearin;}
     ;
 program_name: 
     identifier  {printf("\nprogram-name %s\n\n\n", $1);}
+    | error {printf("Failure :-(\n"); yyerrok; yyclearin;}
     ;
 function_definitions: 
     function_definitions function_definition    {printf("\nfunction-definitions\n\n\n");}
@@ -39,6 +41,7 @@ function_definition:
     ;
 function_name: 
     identifier  {printf("\nfunction-name %s\n\n\n", $1);}
+    | error {printf("Failure :-(\n"); yyerrok; yyclearin;}
     ;
 arguments: 
     arguments argument  {printf("\narguments\n\n\n");}
@@ -49,11 +52,13 @@ argument:
     ;
 return_arg: 
     identifier  {printf("\nreturn-arg %s\n\n\n", $1);}
-    |
+    | 
+    | error {printf("Failure :-(\n"); yyerrok; yyclearin;}
     ;
 statements: 
     statements statement    {printf("\nstatements\n\n\n");}
     | statement             {printf("\nstatement\n\n\n");} 
+    | error {printf("Failure :-(\n"); yyerrok; yyclearin;}
     ;
 statement:
     lBracket equal identifier parameters rBracket       {printf("\nassignment_stmt\n\n\n");}
@@ -73,6 +78,7 @@ predefined_function:
 parameters: 
     parameters parameter   {printf("\nparameters\n\n\n");}
     | 
+    | error {printf("Failure :-(\n"); yyerrok; yyclearin;}
     ;
 parameter: 
     lBracket function_name parameters rBracket          {printf("\nparameter1\n\n\n");}
@@ -90,6 +96,7 @@ expression:
     lBracket comparison_operator parameter parameter rBracket   {printf("\nexpression1\n\n\n");}
     | lBracket Boolean_operator expression expression rBracket  {printf("\nexpression2\n\n\n");}
     | Boolean   {printf("\nexpression3\n\n\n");}
+    | error {printf("Failure :-(\n"); yyerrok; yyclearin;}
     ;
 comparison_operator: 
     equalTo     {printf("\noperator: %s\n\n\n", $1);}
