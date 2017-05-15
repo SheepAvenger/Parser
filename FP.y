@@ -11,17 +11,25 @@ int yyerror(char*);
 
 //int yyerror(const char *p) { return -1; }
 %}
+%start program  /* The Start-Symbol */
 %union {
     char* strval;
     int intval;
     float fltval;
     //node* nPtr;
 }
-%token <strval> identifier cString Boolean
+/* Nonterminal Symbols (type <strval> will be changed to <nPtr>) */
+%type <strval> program program_name function_definitions function_definition function_name
+%type <strval> arguments argument return_arg statements statement
+//%type <strval> assignment_stmt function_call
+%type <strval> predefined_function parameters parameter number
+//%type <strval> if_stmt while_stmt
+%type <strval> expression comparison_operator Boolean_operator
+/* Terminal Symbols */ 
 %token <intval> integer
 %token <fltval> Float
-%token <strval> lBracket
-%token <strval> rBracket lParen rParen equal plus minus mult divide mod equalTo greater less gEqual lEqual notEqual
+%token <strval> identifier cString Boolean lBracket rBracket lParen rParen 
+%token <strval> equal plus minus mult divide mod equalTo greater less gEqual lEqual notEqual
 %token <strval> prog func ret iif then els whle doo and or print 
 //%right "then" "else"
 %%
@@ -30,12 +38,12 @@ program:
     | error {printf("[Yacc] Failure :-(\n"); yyerrok; yyclearin;}
     ;
 program_name: 
-    identifier  {if(DEBUG){printf("[Yacc] \nprogram-name %s\n\n\n", $1);};}
+    identifier  {if(DEBUG){printf("[Yacc] \nprogram-name %s\n\n\n", $1);};$$=$1;}
     | error {printf("[Yacc] Failure :-(\n"); yyerrok; yyclearin;}
     ;
 function_definitions: 
     function_definitions function_definition    {if(DEBUG){printf("[Yacc] \nfunction-definitions\n\n\n");};}
-    | 
+    | {$$ = NULL;}
     ;
 function_definition:
     lBracket func function_name arguments statements ret return_arg rBracket    {if(DEBUG){printf("[Yacc] \nfunction-definition\n\n\n");};}
@@ -46,14 +54,14 @@ function_name:
     ;
 arguments: 
     arguments argument  {if(DEBUG){printf("[Yacc] \narguments\n\n\n");};}
-    | 
+    | {$$ = NULL;}
     ;
 argument: 
     identifier  {if(DEBUG){printf("[Yacc] \nargument %s\n\n\n", $1);};}
     ;
 return_arg: 
     identifier  {if(DEBUG){printf("[Yacc] \nreturn-arg %s\n\n\n", $1);};}
-    | 
+    | {$$ = NULL;}
     | error {printf("[Yacc] Failure :-(\n"); yyerrok; yyclearin;}
     ;
 statements: 
@@ -78,7 +86,7 @@ predefined_function:
     ;
 parameters: 
     parameters parameter   {if(DEBUG){printf("[Yacc] \nparameters\n\n\n");};}
-    | 
+    | {$$ = NULL;}
     | error {printf("[Yacc] Failure :-(\n"); yyerrok; yyclearin;}
     ;
 parameter: 
