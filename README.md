@@ -1,4 +1,4 @@
-Project Phase 2 - Syntax analysis (Due on May 17)
+#Project Phase 2 - Syntax analysis (Due on May 17)
 ## Team Members
 kw5854 - Robert McCook
 pg4425 - Jon Quianzon

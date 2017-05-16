@@ -20,10 +20,8 @@ int yyerror(char*);
 }
 /* Nonterminal Symbols (type <strval> will be changed to <nPtr>) */
 %type <strval> program program_name function_definitions function_definition function_name
-%type <strval> arguments argument return_arg statements statement
-//%type <strval> assignment_stmt function_call
-%type <strval> predefined_function parameters parameter number
-//%type <strval> if_stmt while_stmt
+%type <strval> arguments argument return_arg statements statement assignment_stmt function_call
+%type <strval> predefined_function parameters parameter number if_stmt while_stmt
 %type <strval> expression comparison_operator Boolean_operator
 /* Terminal Symbols */ 
 %token <intval> integer
@@ -67,14 +65,20 @@ return_arg:
 statements: 
     statements statement    {if(DEBUG){printf("[Yacc] \nstatements\n\n\n");};}
     | statement             {if(DEBUG){printf("[Yacc] \nstatement\n\n\n");};} 
-    | error {printf("[Yacc] Failure :-(\n"); yyerrok; yyclearin;}
     ;
 statement:
+    assignment_stmt
+    | function_call
+    | if_stmt
+    | while_stmt
+    | error {printf("[Yacc] Failure :-(\n"); yyerrok; yyclearin;}
+    ;
+assignment_stmt:
     lBracket equal identifier parameters rBracket       {if(DEBUG){printf("[Yacc] \nassignment_stmt\n\n\n");};}
+    ;
+function_call:
+    lBracket function_name parameters rBracket        {if(DEBUG){printf("[Yacc] \nfunction_call1\n\n\n");};}
     | lBracket predefined_function parameters rBracket  {if(DEBUG){printf("[Yacc] \nfunction_call2\n\n\n");};}
-    | lBracket iif expression then statements els statements rBracket   {if(DEBUG){printf("[Yacc] \nif_stmt\n\n\n");};}
-    | lBracket whle expression doo statements rBracket  {if(DEBUG){printf("[Yacc] \nwhile_stmt\n\n\n");};}
-    | lBracket function_name parameters rBracket        {if(DEBUG){printf("[Yacc] \nfunction_call1\n\n\n");};}
     ;
 predefined_function: 
     plus 	    {if(DEBUG){printf("[Yacc] \nplus\n\n\n");};}
@@ -87,19 +91,24 @@ predefined_function:
 parameters: 
     parameters parameter   {if(DEBUG){printf("[Yacc] \nparameters\n\n\n");};}
     | {$$ = NULL;}
-    | error {printf("[Yacc] Failure :-(\n"); yyerrok; yyclearin;}
     ;
 parameter: 
-    lBracket function_name parameters rBracket          {if(DEBUG){printf("[Yacc] \nparameter1\n\n\n");};}
+    function_call
     | identifier    {if(DEBUG){printf("[Yacc] \nparameter: %s\n\n\n", $1);};}
     | number        {if(DEBUG){printf("[Yacc] \nparameter3\n\n\n");};}
     | cString       {if(DEBUG){printf("[Yacc] \nparameter: %s\n\n\n", $1);};}
     | Boolean       {if(DEBUG){printf("[Yacc] \nparameter: %s\n\n\n", $1);};}
-    | lBracket predefined_function parameters rBracket  {if(DEBUG){printf("[Yacc] \nparameter6\n\n\n");};}
+    | error {printf("[Yacc] Failure :-(\n"); yyerrok; yyclearin;}
     ;
 number: 
     integer     {if(DEBUG){printf("[Yacc] \nnumber1: %i\n\n\n", $1);};}
     | Float     {if(DEBUG){printf("[Yacc] \nnumber2: %f\n\n\n", $1);};}
+    ;
+if_stmt:
+    lBracket iif expression then statements els statements rBracket   {if(DEBUG){printf("[Yacc] \nif_stmt\n\n\n");};}
+    ;
+while_stmt:
+    lBracket whle expression doo statements rBracket  {if(DEBUG){printf("[Yacc] \nwhile_stmt\n\n\n");};}
     ;
 expression: 
     lBracket comparison_operator parameter parameter rBracket   {if(DEBUG){printf("[Yacc] \nexpression1\n\n\n");};}
@@ -120,6 +129,9 @@ Boolean_operator:
     | and   {if(DEBUG){printf("[Yacc] \noperator: %s\n\n\n", $1);};}
     ;
 %%
+
+
+
 int yyerror(char *s)
 {
     //if(DEBUG){fprintf(stdout, "%s\n", s);
