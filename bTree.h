@@ -22,4 +22,7 @@ typedef struct nodeTag
         nonTerminal nonTerm;
     }; 
 } nodeType; 
+
+extern nodeType* root;
+
 #endif

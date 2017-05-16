@@ -6,6 +6,8 @@
 #define DEBUG 0
 
 int isPrime(int p);
+void printTree(nodeType* p);
+void freeNode(nodeType* p);
 int myPrime;
 
 void main()
@@ -41,7 +43,8 @@ void main()
 	  
     printf("\n");   
 	printBlocks(); 
-    
+    printTree(root);
+    freeNode(root);
 }
 
 int isPrime(int p)
@@ -53,3 +56,33 @@ int isPrime(int p)
     else
         return 0;
 }
+
+void printTree(nodeType* p)
+{
+    int i, num_child;
+    if(p == NULL){return;}
+    if(p->type == nt)
+    {
+        num_child = p->nonTerm.num_child;
+        for(i = 0; i < num_child; i++)
+        {
+            printTree(p->nonTerm.child[i]);
+        }
+    }
+    else
+    {
+        printf("%s ", p->term.ptr);
+    }
+}
+
+void freeNode(nodeType* p) 
+{ 
+    int i; 
+    if (!p) return; 
+    if (p->type == nt) 
+    { 
+        for (i = 0; i < p->nonTerm.num_child; i++) 
+            freeNode(p->nonTerm.child[i]); 
+    }
+    free (p); 
+} 
