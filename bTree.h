@@ -15,7 +15,8 @@ typedef struct
 } nonTerminal; 
 
 typedef struct nodeTag 
-{ 
+{
+    char* label;
     nodeEnum type;  /* type of node */ 
     union { 
         terminal term;
