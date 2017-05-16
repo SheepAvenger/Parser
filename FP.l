@@ -3,10 +3,10 @@
 #include <math.h>
 #include <stdio.h>
 #include "scanner.h"
+#include "bTree.h"
 #include "FP.tab.h"
 #include "stack.h"
 #include "hash.h"
-
 #define DEBUG 1
 #define STDEBUG 0
 

@@ -1,6 +1,6 @@
-//#include "lex.yy.c"
 #include<stdlib.h>
 #include<stdio.h>
+#include "bTree.h"
 #include "FP.tab.h"
 #include "scanner.h"
 #define DEBUG 0
@@ -10,7 +10,6 @@ int myPrime;
 
 void main()
 {
-    //extern FILE *yyin;
     FILE *yyin = stdin;
     long int size;
     fseek(yyin, 1, SEEK_END);

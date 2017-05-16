@@ -1,39 +1,25 @@
 #ifndef HEADER_BTREE
 #define HEADER_BTREE
 
-#include <stdlib.h>
-#include <stdio.h>
-#include "FP.tab.h"
+typedef enum { t, nt } nodeEnum; 
 
-struct leaf
-{
-	int tokenType;
-	struct leaf* leftParam;
-	struct leaf* rightParam;
-};
+typedef struct 
+{ 
+    char* ptr;  /* point to ST */
+} terminal; 
 
-struct leaf* makeNode(int word, struct leaf* leftP, struct leaf* rightP) {
-    struct leaf *node;
-    node = malloc(sizeof(node));
-    node->tokenType = word;
-    node->rightParam = leftP;
-    node->leftParam = rightP;
-    return node;
-}
+typedef struct 
+{ 
+    int num_child;  /* number of children */ 
+    struct nodeTag *child[1];  /* children */ 
+} nonTerminal; 
 
-void printTree(struct leaf* node)
-{
-	  switch (node->tokenType) {
-    case identifier:
-        printf("%i", node->tokenType);
-        break;
-    default:
-        printf("(");
-        printTree(node->leftParam);
-        printf("%i", node->tokenType);
-        printTree(node->rightParam);
-        printf(")");
-        break;
-    }
-}
+typedef struct nodeTag 
+{ 
+    nodeEnum type;  /* type of node */ 
+    union { 
+        terminal term;
+        nonTerminal nonTerm;
+    }; 
+} nodeType; 
 #endif

@@ -1,28 +1,28 @@
 %{
-#include <stdio.h>
-//#include "scanner.l"
+#include <stdio.h> 
+#include <stdlib.h> 
+#include <stdarg.h> 
 #include "bTree.h"
 #define DEBUG 1
 
-//int isPrime(int p);
 int yylex();
+nodeType* addLeafNode(char* ptr);
+nodeType* addNode(int num_args, ...);
+void freeNode(nodeType* p);
 int yyerror(char*);
-//int myPrime;
-
-//int yyerror(const char *p) { return -1; }
 %}
 %start program  /* The Start-Symbol */
 %union {
     char* strval;
     int intval;
     float fltval;
-    //node* nPtr;
+    nodeType* nPtr;
 }
 /* Nonterminal Symbols (type <strval> will be changed to <nPtr>) */
-%type <strval> program program_name function_definitions function_definition function_name
-%type <strval> arguments argument return_arg statements statement assignment_stmt function_call
-%type <strval> predefined_function parameters parameter number if_stmt while_stmt
-%type <strval> expression comparison_operator Boolean_operator
+%type <nPtr> program program_name function_definitions function_definition function_name
+%type <nPtr> arguments argument return_arg statements statement assignment_stmt function_call
+%type <nPtr> predefined_function parameters parameter number if_stmt while_stmt
+%type <nPtr> expression comparison_operator Boolean_operator
 /* Terminal Symbols */ 
 %token <intval> integer
 %token <fltval> Float
@@ -36,7 +36,7 @@ program:
     | error {printf("[Yacc] Failure :-(\n"); yyerrok; yyclearin;}
     ;
 program_name: 
-    identifier  {if(DEBUG){printf("[Yacc] \nprogram-name %s\n\n\n", $1);};$$=$1;}
+    identifier  {if(DEBUG){printf("[Yacc] \nprogram-name %s\n\n\n", $1);};}
     | error {printf("[Yacc] Failure :-(\n"); yyerrok; yyclearin;}
     ;
 function_definitions: 
@@ -129,9 +129,41 @@ Boolean_operator:
     | and   {if(DEBUG){printf("[Yacc] \noperator: %s\n\n\n", $1);};}
     ;
 %%
-
-
-
+nodeType* addLeafNode(char* ptr) 
+{ 
+    nodeType *p; 
+    if ((p = malloc(sizeof(nodeType))) == NULL) 
+        yyerror("malloc error"); 
+    p->type = t; 
+    p->term.ptr = ptr; 
+    return p; 
+} 
+nodeType* addNode(int num_args, ...) 
+{
+    va_list ap; 
+    nodeType *p; 
+    int i; 
+    if ((p = malloc(sizeof(nodeType) + (num_args-1) * sizeof(nodeType *))) == NULL) 
+        yyerror("malloc error"); 
+    p->type = nt; 
+    p->nonTerm.num_child = num_args; 
+    va_start(ap, num_args); 
+    for (i = 0; i < num_args; i++) 
+        p->nonTerm.child[i] = va_arg(ap, nodeType*); 
+    va_end(ap); 
+    return p; 
+} 
+void freeNode(nodeType* p) 
+{ 
+    int i; 
+    if (!p) return; 
+    if (p->type == nt) 
+    { 
+        for (i = 0; i < p->nonTerm.num_child; i++) 
+            freeNode(p->nonTerm.child[i]); 
+    }
+    free (p); 
+} 
 int yyerror(char *s)
 {
     //if(DEBUG){fprintf(stdout, "%s\n", s);
