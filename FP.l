@@ -7,7 +7,7 @@
 #include "FP.tab.h"
 #include "stack.h"
 #include "hash.h"
-#define DEBUG 1
+#define DEBUG 0
 #define STDEBUG 0
 
 void buildST(char*, char*);

@@ -3,11 +3,13 @@
 #include "bTree.h"
 #include "FP.tab.h"
 #include "scanner.h"
+#include "queue.h"
 #define DEBUG 0
 
 int isPrime(int p);
-void printTree(nodeType* p);
-void freeNode(nodeType* p);
+void printTree(tNode* p);
+void printChild(tNode* p);
+void freeNode(tNode* p);
 int myPrime;
 
 void main()
@@ -56,26 +58,42 @@ int isPrime(int p)
     else
         return 0;
 }
-
-void printTree(nodeType* p)
+void printTree(tNode* p)
 {
-    int i, num_child;
-    if(p == NULL){return;}
-    if(p->type == nt)
+    int count, num_child, i;
+    tNode* t;
+    enqueue(p);
+    count = qSize;
+    while(qSize != 0)
     {
-        num_child = p->nonTerm.num_child;
-        for(i = 0; i < num_child; i++)
+        t = dequeue();
+        if(t == NULL){
+            printf("[]");
+            continue;
+        }    
+        if(t->type == nt)
         {
-            printTree(p->nonTerm.child[i]);
+            printf("[%s]", t->label); 
+            num_child = t->nonTerm.num_child;
+            for(i = 0; i < num_child; i++)
+            {
+                enqueue(t->nonTerm.child[i]);
+            }
         }
-    }
-    else
-    {
-        printf("%s ", p->term.ptr);
+        else
+        {
+            printf("[%s]", p->label);
+        }
+        count--;
+        if(count == 0)
+        {
+            printf(" %d\n", qSize); 
+            count = qSize;
+        }
     }
 }
 
-void freeNode(nodeType* p) 
+void freeNode(tNode* p) 
 { 
     int i; 
     if (!p) return; 

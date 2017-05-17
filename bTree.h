@@ -22,8 +22,8 @@ typedef struct nodeTag
         terminal term;
         nonTerminal nonTerm;
     }; 
-} nodeType; 
+} tNode; 
 
-extern nodeType* root;
+extern tNode* root;
 
 #endif
