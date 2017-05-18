@@ -32,7 +32,7 @@ tNode* root = NULL;
 //%right "then" "else"
 %%
 program: 
-    lBracket prog program_name function_definitions statements rBracket {if(DEBUG){printf("[Yacc] start\n");}; $$=addNode("program", 6, addLeaf(NULL, $1), addLeaf(NULL, $2), $3, $4, $5, addLeaf(NULL, $6)); root = $$;}
+    lBracket prog program_name function_definitions statements rBracket {if(DEBUG){printf("[Yacc] start\n");}; $$=addNode("program", 6, addLeaf("{", $1), addLeaf($2, $2), $3, $4, $5, addLeaf("}", $6)); root = $$;}
     | error {printf("[Yacc] Failure :-(\n"); yyerrok; yyclearin;}
     ;
 program_name: 

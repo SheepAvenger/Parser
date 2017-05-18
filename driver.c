@@ -82,7 +82,7 @@ void printTree(tNode* p)
         }
         else
         {
-            printf("[%s]", p->label);
+            printf("[%s]", t->label);
         }
         count--;
         if(count == 0)
