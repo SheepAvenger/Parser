@@ -1,6 +1,9 @@
 #ifndef HEADER_BTREE
 #define HEADER_BTREE
 
+#include <stdlib.h>
+#include <stdio.h>
+
 typedef enum { t, nt } nodeEnum; 
 
 typedef struct 
@@ -11,11 +14,11 @@ typedef struct
 typedef struct 
 { 
     int num_child;  /* number of children */ 
-    struct nodeTag *child[1];  /* children */ 
+    struct nodeTag* *child;  /* children */ 
 } nonTerminal; 
 
 typedef struct nodeTag 
-{
+{ 
     char* label;
     nodeEnum type;  /* type of node */ 
     union { 
@@ -25,5 +28,4 @@ typedef struct nodeTag
 } tNode; 
 
 extern tNode* root;
-
 #endif

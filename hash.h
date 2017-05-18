@@ -2,7 +2,8 @@
 #define HEADER_HASH
 
 #include "stack.h"
-#include <stdio.h>
+#include <ctype.h>
+//#include <stdio.h>
 
 struct node
 {
@@ -20,7 +21,7 @@ struct Hash
     void (*display)(struct node**, int);
     void (*setSize)(struct node***, int);
     long long (*hashkey)(char*, int);
-   struct  node* (*findInScope)(struct node**, char*, int, long long);
+    struct  node* (*findInScope)(struct node**, char*, int, long long);
     struct node* (*findInGlobal)(struct node**, struct block* , char*, long long);
 };
 
@@ -40,23 +41,72 @@ struct node * createNode(char *s, char *t, int scope)
 long long hashkey(char* myString, int s)
 {
     long long key;
-
-	for (key = 1; *myString;)
+	int i = 0;
+	int j = 0;
+	int hasSpace = 0;
+	char * newString = myString;
+	int isNumber = 0;
+	int isFloat = 0;
+	if(*myString != '(')
 	{
-		key = (key*(long long)(*myString++)) % s;
+		while (myString[i] != '\0')
+		{
+        		if (myString[i] >= '0' && myString[i] <= '9')
+				isNumber = 1;
+			if(myString[i] == ' ')
+				hasSpace = 1;
+			if(myString[i] == '.')
+				isFloat = 1;
+			i++;
+    		}
+	}
+	i = 0;
+	if(isNumber && hasSpace)
+	{
+		while(myString[i] != '\0')
+		{
+			if(myString[i] != ' ')
+			{
+				newString[j] = myString[i];
+				j++;	
+			}
+			i++;
+		}
+		newString[strlen(newString)-1] = '\0';
+	}
+	/*if(isFloat)
+	{
+		if((strlen(newString) < 8 && newString[0] != '-') || (strlen(newString) < 9 && newString[0] == '-'))
+		{
+			printf("too short\n");
+			char* appendString = malloc(sizeof(char*));
+			strcat(appendString, newString);
+			printf("copy addpend: %s\n", appendString);
+			int add = 0;
+			if(newString[0] == '-')
+				add = 9;
+			else
+				add = 8;
+			for(i = strlen(myString); i < add; i++)
+			{
+				strcat(appendString, "0");
+				printf("addpend: %s\n", appendString);
+			}
+			//free(newString);
+			
+			printf("freed\n");
+			newString = malloc(sizeof(char*));
+			printf("allocate\n");
+			newString = appendString; 
+		}
+	}*/
+	for (key = 1; *newString;)
+	{
+		key = (key*(long long)(*newString++)) % s;
 	}
 	return (key < 0 ? -key : key);
 }
 
-/*struct node** setSize(struct node** h, int s)
-{
-   h = malloc(s * sizeof(h));
-    for(s = s-1; s >= 0; s--)
-    {
-        h[s] = NULL;
-    }
-    return h;
-}*/
 
 void setSize(struct node*** h, int s)
 {

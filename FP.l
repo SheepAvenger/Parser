@@ -4,9 +4,9 @@
 #include <stdio.h>
 #include "scanner.h"
 #include "bTree.h"
+#include "hash.h"
 #include "FP.tab.h"
 #include "stack.h"
-#include "hash.h"
 #define DEBUG 0
 #define STDEBUG 0
 
@@ -14,11 +14,11 @@ void buildST(char*, char*);
 
 struct Hash symbolTable = {NULL, insertToHash, display, setSize, hashkey, findInScope, findInGlobal};
 struct Stack activeBlock = {NULL, push, pop, printStack, peek};
-struct node* myNode;
+struct node* myNode = NULL;
 
-int prime, scope = 0;
+int scope = 0;
 long long key = 0;
-int prime = 0;
+extern int prime;
 
 %}
 /* 1.2 identifier, integer, float, character-string, Boolean */
@@ -34,8 +34,8 @@ SPACE       [ \t\r\n]+
 KEYWORD     Program|Function|return|if|then|else|while|do|or|and|print
 SYMBOL      \{|\}|\(|\)|\=|\+|\-|\*|\/|\%|\=\=|\>|\<|\>\=|\<\=|\!\=
 %%
-{INT}       {char *ptr; yylval.intval = strtoul(yytext, &ptr, 10); if(DEBUG){printf("[Lex] Integer: %s\n", yytext);}; buildST(yytext, "Integer"); return integer;}
-{FLOAT}     {yylval.fltval = atof(yytext); if(DEBUG){printf("[Lex] Float: %s\n", yytext);}; buildST(yytext, "Float"); return Float;}
+{INT}       {yylval.strval = yytext; if(DEBUG){printf("[Lex] Integer: %s\n", yytext);}; buildST(yytext, "Integer"); return integer;}
+{FLOAT}     {yylval.strval = yytext; if(DEBUG){printf("[Lex] Float: %s\n", yytext);}; buildST(yytext, "Float"); return Float;}
 {KEYWORD}   {yylval.strval = yytext; if(DEBUG){printf("[Lex] Keyword: %s\n", yytext);}; buildST(yytext, "KeyWord"); if( strcmp(yytext, "Program") == 0)
 		return prog;
 	else if( strcmp(yytext, "Function") == 0)
@@ -61,39 +61,52 @@ SYMBOL      \{|\}|\(|\)|\=|\+|\-|\*|\/|\%|\=\=|\>|\<|\>\=|\<\=|\!\=
 {BOOLEAN}   {yylval.strval = yytext; if(DEBUG){printf("[Lex] Boolean: %s\n", yytext);}; buildST(yytext, "Boolean"); return Boolean;}
 {ID}        {yylval.strval = yytext; if(DEBUG){printf("[Lex] Identifier: %s\n", yytext);}; buildST(yytext, "Identifier"); return identifier;}
 {STRING}    {yylval.strval = yytext; if(DEBUG){printf("[Lex] char-String: %s\n", yytext);}; buildST(yytext, "Char-String"); return cString;}
-{SYMBOL}    {yylval.strval = yytext; if(DEBUG){printf("[Lex] Special Symbol: %s\n", yytext);}; buildST(yytext, "Special Symbol"); if(strcmp(yytext, "{") == 0)
-		return lBracket;
+{SYMBOL}    { if(DEBUG){printf("[Lex] Special Symbol: %s\n", yytext);}; buildST(yytext, "Special Symbol"); if(strcmp(yytext, "{") == 0)
+		return yytext[0];
 	else if( strcmp(yytext, "}") == 0)
-		return rBracket;
+		return yytext[0];//return rBracket;
 	else if( strcmp(yytext, "(") == 0)
-		return lParen;
+		return yytext[0];//return lParen;
 	else if( strcmp(yytext, ")") == 0)
-		return rParen;
+		return yytext[0];//return rParen;
 	else if( strcmp(yytext, "=") == 0)
-		return equal;
+		return yytext[0];//return equal;
 	else if( strcmp(yytext, "+") == 0)
-		return plus;
+		return yytext[0];
 	else if( strcmp(yytext, "-") == 0)
-		return minus;
+		return yytext[0];
 	else if( strcmp(yytext, "*") == 0)
-		return mult;
+		return yytext[0];
 	else if( strcmp(yytext, "/") == 0)
-		return divide;
+		return yytext[0];
 	else if( strcmp(yytext, "%") == 0)
-		return mod;
+		return yytext[0];
 	else if( strcmp(yytext, "==") == 0)
+	{
+		yylval.strval = yytext;
 		return equalTo;
+	}
 	else if( strcmp(yytext, ">") == 0)
-		return greater;
+		return yytext[0];
 	else if( strcmp(yytext, "<") == 0)
-		return less;
+		return yytext[0];
 	else if( strcmp(yytext, "<=") == 0)
+	{
+		yylval.strval = yytext;
 		return lEqual;
+	}
 	else if( strcmp(yytext, ">=") == 0)
+	{
+		yylval.strval = yytext;
 		return gEqual;
+	}
 	else if( strcmp(yytext, "!=") == 0)
-		return notEqual;}
-{SPACE}     /* skip whitespace */
+	{
+		yylval.strval = yytext;
+		return notEqual;
+	}
+	}
+{SPACE}     //{return '\0';}/* skip whitespace */
 {UNDEFINED} {if(DEBUG){printf("[Lex] Unrecognized: %s\n",yytext);}};
 %%
 void buildST(char* string, char* type)
@@ -101,8 +114,7 @@ void buildST(char* string, char* type)
     if(STDEBUG){printf("Read %s, ", string);}      
     if(strcmp(string, "{") == 0)
     {
-        //activeBlock.head = activeBlock.push(activeBlock.head, scope);
-		 activeBlock.push(&activeBlock.head, scope);
+	activeBlock.push(&activeBlock.head, scope);
         if(STDEBUG)
         {
             printf("Scope %d pushed.\n", scope);
@@ -113,9 +125,7 @@ void buildST(char* string, char* type)
     }
     else if(strcmp(string, "}") == 0)
     {
-        //int scope = activeBlock.peek(activeBlock.head);
-        //activeBlock.head = activeBlock.pop(activeBlock.head);
-		 int scope = activeBlock.pop(&activeBlock.head);
+	int scope = activeBlock.pop(&activeBlock.head);
         if(STDEBUG)
         {
             printf("Scope %d popped.\n", scope);
@@ -172,4 +182,27 @@ void printBlocks()
 {
 	activeBlock.printStack(activeBlock.head, "Active Block");
 }
-
+char* searchTable(long long hashIndex, char* myString, char* myType)
+{
+	struct node *myNode = NULL;
+    	if (symbolTable.head[hashIndex] == NULL)
+    	{
+        	return NULL;
+    	}
+    	myNode = symbolTable.head[hashIndex];
+    	while(myNode != NULL)
+	{
+		if(strcmp(myNode->Id, myString) == 0)
+		{
+			printf("id: %s  myString: %s\n", myNode->Id, myString);
+			myNode->type = (myType == NULL || strcmp(myType, "program") == 0 ? myNode->type : myType);
+			return myNode->Id;
+		}
+		else
+			myNode = myNode->next;
+	}
+}
+long long getKey(char* ptr)
+{
+	return symbolTable.hashkey(ptr, prime);
+}

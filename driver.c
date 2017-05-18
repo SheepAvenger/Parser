@@ -1,3 +1,4 @@
+//#include "lex.yy.c"
 #include<stdlib.h>
 #include<stdio.h>
 #include "bTree.h"
@@ -6,57 +7,47 @@
 #include "queue.h"
 #define DEBUG 0
 
+void printTree(tNode*);
+void freeNode(tNode*);
 int isPrime(int p);
-void printTree(tNode* p);
-void printChild(tNode* p);
-void freeNode(tNode* p);
-int myPrime;
+int prime;
+tNode* root;
 
 void main()
 {
     FILE *yyin = stdin;
     long int size;
     fseek(yyin, 1, SEEK_END);
-	printf("point 1\n");
     size = ftell(yyin);
     rewind(yyin);
     if(size > 271)
     {
         size /= 16;
-        myPrime = size -1;
-        for(; ; myPrime--)
+        prime = size -1;
+        for(; ; prime--)
         {
-            if(isPrime(myPrime))
+            if(isPrime(prime))
             break;
         }
     }
     else
-        myPrime = 13; // default prime for file size smaller than 272
-    if(DEBUG) {printf("Prime: %d\n\n", myPrime);}    
-    createTable(myPrime);
+        prime = 13; // default prime for file size smaller than 272
+    if(DEBUG) {printf("Prime: %d\n\n", prime);}    
+    createTable(prime);
     
     do {
         int t = yyparse();
 	printf("t %i\n", t);
     } while(!feof(yyin));
 	fclose(yyin);
-    printf("\n========= Finished reading the input file =========\n");
+   printf("\n========= Finished reading the input file =========\n");
 	printTable();
 	  
     printf("\n");   
 	printBlocks(); 
-    printTree(root);
-    freeNode(root);
-}
-
-int isPrime(int p)
-{
-    int i;
-    for(i = 2; p%i != 0; i++);
-    if(p==i)
-        return 1;
-    else
-        return 0;
+    printf("\n");
+	printTree(root);
+    
 }
 void printTree(tNode* p)
 {
@@ -104,3 +95,12 @@ void freeNode(tNode* p)
     }
     free (p); 
 } 
+int isPrime(int p)
+{
+    int i;
+    for(i = 2; p%i != 0; i++);
+    if(p==i)
+        return 1;
+    else
+        return 0;
+}
