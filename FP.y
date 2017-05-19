@@ -34,7 +34,7 @@ tNode* root = NULL;
 //%right "then" "else"
 %%
 program: 
-    '{' prog program_name function_definitions statements '}' {if(DEBUG){printf("[Yacc] \nstart\n");}; $$=addNode("program",6, addLeaf("{", "{"), addLeaf("program", "Program"), $3, $4, $5, addLeaf("}", "}")); root = $$;}
+    '{' prog program_name function_definitions statements '}' {if(DEBUG){printf("[Yacc] \nstart\n");}; $$=addNode("program",6, addLeaf(NULL, "{"), addLeaf(NULL, "Program"), $3, $4, $5, addLeaf(NULL, "}")); root = $$;}
     | error {printf("[Yacc] Failure :-(\n"); yyerrok; yyclearin;}
     ;
 program_name: 
@@ -42,7 +42,7 @@ program_name:
     | error {printf("[Yacc] Failure :-(\n"); yyerrok; yyclearin;}
     ;
 function_definitions: 
-    function_definitions function_definition    {if(DEBUG){printf("[Yacc] \nfunction-definitions\n\n\n");}; $$=addNode("Function-definitions",2, $1, $2);}
+    function_definitions function_definition    {if(DEBUG){printf("[Yacc] \nfunction-definitions\n\n\n");}; $$=addNode("function-definitions",2, $1, $2);}
     | {$$ = NULL;}
     ;
 function_definition:
@@ -76,7 +76,7 @@ statement:
     | error {printf("[Yacc] Failure :-(\n"); yyerrok; yyclearin;}
     ;
 assignment_stmt:
-    '{' '=' Identifiers parameters '}'       {if(DEBUG){printf("[Yacc] \nassignment_stmt: \n\n\n");}; $$=addNode("assignment-stmt", 5, addLeaf("{", "{"), addLeaf("=","="), $3, $4, addLeaf("}","}"));}
+    '{' '=' Identifiers parameters '}'       {if(DEBUG){printf("[Yacc] \nassignment_stmt: \n\n\n");}; $$=addNode("assignment-stmt", 5, addLeaf(NULL, "{"), addLeaf(NULL,"="), $3, $4, addLeaf(NULL,"}"));}
     ;
 function_call:
     '{' function_name parameters '}'        {if(DEBUG){printf("[Yacc] \nfunction_call1\n\n\n");}; $$=addNode("function-call", 4, addLeaf(NULL,"{"), $2, $3, addLeaf(NULL,"}"));}
@@ -154,7 +154,8 @@ tNode* addNode(char* label, int num_args, ...)
     va_list ap; 
     tNode *p; 
     int i; 
-    if ((p = malloc(sizeof(tNode) + (num_args-1) * sizeof(tNode *))) == NULL) 
+    //if ((p = malloc(sizeof(tNode) + (num_args-1) * sizeof(tNode *))) == NULL) 
+    if ((p = malloc(sizeof(tNode))) == NULL) 
         yyerror("malloc error"); 
     p->label = label;
     p->type = nt; 

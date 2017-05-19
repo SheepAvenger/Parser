@@ -6,12 +6,11 @@
 #include "scanner.h"
 #include "queue.h"
 #define DEBUG 0
-
 void printTree(tNode*);
 void freeNode(tNode*);
 int isPrime(int p);
 int prime;
-tNode* root;
+//tNode* root;
 
 void main()
 {
@@ -40,18 +39,19 @@ void main()
 	printf("t %i\n", t);
     } while(!feof(yyin));
 	fclose(yyin);
-   printf("\n========= Finished reading the input file =========\n");
+    printf("\n========= Finished reading the input file =========\n");
 	printTable();
 	  
     printf("\n");   
 	printBlocks(); 
     printf("\n");
-	printTree(root);
-    
+    printTree(root);
+    freeNode(root);
 }
 void printTree(tNode* p)
 {
-    int count, num_child, i;
+    int count, num_child, i , indent;
+    indent = 2;
     tNode* t;
     enqueue(p);
     count = qSize;
@@ -60,9 +60,8 @@ void printTree(tNode* p)
         t = dequeue();
         if(t == NULL){
             printf("[]");
-            continue;
         }    
-        if(t->type == nt)
+        else if(t->type == nt)
         {
             printf("[%s]", t->label); 
             num_child = t->nonTerm.num_child;
@@ -73,17 +72,30 @@ void printTree(tNode* p)
         }
         else
         {
-            printf("[%s]", t->label);
+            if(t->label)
+            {
+                printf("[%s:%s]", t->label, t->term.ptr);
+            }
+            else
+            {
+                printf("[%s]", t->term.ptr);
+            }
         }
         count--;
         if(count == 0)
         {
-            printf(" %d\n", qSize); 
+            //printf("\n\timage %d branches here", qSize); 
+            printf("\n");
+            for(i=0; i < indent; i++)
+            {
+                printf(" ");
+            }
+            indent += 2;
             count = qSize;
         }
     }
+    printf("\n");
 }
-
 void freeNode(tNode* p) 
 { 
     int i; 
@@ -94,7 +106,7 @@ void freeNode(tNode* p)
             freeNode(p->nonTerm.child[i]); 
     }
     free (p); 
-} 
+}
 int isPrime(int p)
 {
     int i;
