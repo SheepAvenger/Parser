@@ -36,7 +36,7 @@ void main()
     
     do {
         int t = yyparse();
-	printf("t %i\n", t);
+	 if(DEBUG) {printf("t %i\n", t);}
     } while(!feof(yyin));
 	fclose(yyin);
     printf("\n========= Finished reading the input file =========\n");

@@ -25,7 +25,7 @@ tNode* root = NULL;
 %type <nPtr> program program_name function_definitions function_definition function_name
 %type <nPtr> arguments argument return_arg statements statement assignment_stmt function_call
 %type <nPtr> predefined_function parameters parameter number if_stmt while_stmt
-%type <nPtr> expression comparison_operator Boolean_operator Identifiers
+%type <nPtr> expression comparison_operator Boolean_operator Identifiers expression_id
 /* Terminal Symbols */ 
 %token <strval> Float integer
 %token <strval> identifier cString Boolean lBracket rBracket lParen rParen
@@ -76,7 +76,7 @@ statement:
     | error {printf("[Yacc] Failure :-(\n"); yyerrok; yyclearin;}
     ;
 assignment_stmt:
-    '{' '=' Identifiers parameters '}'       {if(DEBUG){printf("[Yacc] \nassignment_stmt: \n\n\n");}; $$=addNode("assignment-stmt", 5, addLeaf(NULL, "{"), addLeaf(NULL,"="), $3, $4, addLeaf(NULL,"}"));}
+    '{' '=' Identifiers parameter '}'       {if(DEBUG){printf("[Yacc] \nassignment_stmt: \n\n\n");}; $$=addNode("assignment-stmt", 5, addLeaf(NULL, "{"), addLeaf("assignment-operator","="), $3, $4, addLeaf(NULL,"}"));}
     ;
 function_call:
     '{' function_name parameters '}'        {if(DEBUG){printf("[Yacc] \nfunction_call1\n\n\n");}; $$=addNode("function-call", 4, addLeaf(NULL,"{"), $2, $3, addLeaf(NULL,"}"));}
@@ -112,8 +112,16 @@ if_stmt:
 while_stmt:
     '{' whle expression doo statements '}'  {if(DEBUG){printf("[Yacc] \nwhile_stmt\n\n\n");}; $$=addNode("while-stmt", 6, addLeaf(NULL,"{"), addLeaf(NULL,"while"), $3, addLeaf(NULL,"do"), $5, addLeaf(NULL,"}"));}
     ;
+expression_id:
+    function_call   {$$=addNode("expression-id", 1, $1);}
+    | identifier    {if(DEBUG){printf("[Yacc] \nexpression-id: %s\n\n\n", $1);}; $$=addLeaf("expression-id", $1);}
+    | number        {if(DEBUG){printf("[Yacc] \nexpression-id3\n\n\n");}; $$=addNode("expression-id", 1, $1);}
+    | cString       {if(DEBUG){printf("[Yacc] \nexpression-id: %s\n\n\n", $1);}; $$=addLeaf("expression-id", $1);}
+    | Boolean       {if(DEBUG){printf("[Yacc] \nexpression-id: %s\n\n\n", $1);}; $$=addLeaf("expression-id", $1);}
+    | error {printf("[Yacc] Failure :-(\n"); yyerrok; yyclearin;}
+    ;
 expression: 
-    '{' comparison_operator parameter parameter '}'   {if(DEBUG){printf("[Yacc] \nexpression1\n\n\n");}; $$=addNode("expression", 5, addLeaf(NULL,"{"), $2, $3, $4, addLeaf(NULL,"}"));}
+    '{' comparison_operator expression_id expression_id '}'   {if(DEBUG){printf("[Yacc] \nexpression1\n\n\n");}; $$=addNode("expression", 5, addLeaf(NULL,"{"), $2, $3, $4, addLeaf(NULL,"}"));}
     | '{' Boolean_operator expression expression '}'  {if(DEBUG){printf("[Yacc] \nexpression2\n\n\n");}; $$=addNode("expression", 5, addLeaf(NULL,"{"), $2, $3, $4, addLeaf(NULL,"}"));}
     | Boolean   {if(DEBUG){printf("[Yacc] \nexpression3\n\n\n");}; $$=addLeaf("expression", $1);}
     | error {printf("[Yacc] Failure :-(\n"); yyerrok; yyclearin;}
