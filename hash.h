@@ -186,7 +186,7 @@ void display(struct node** h, int s)
         {
             myNode = h[i];
              printf("\nData at index %d in Symbol Table:\n", i);
-            printf("Scope	Type                 String\n");
+            printf("Scope	Type                 Value\n");
             printf("---------------------------------------\n");
             while (myNode != NULL)
             {
