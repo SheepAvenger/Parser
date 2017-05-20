@@ -39,4 +39,101 @@ Execute the program with an input sample file
 ## Test
 ### Input
 See sample.fp
+### Output
+[program]
+  [{][Program][program-name:Sample][Function-definitions][statements][}]
+    [function-definition][statement]
+      [{][Function][function-name:facto][arguments][statements][return][return-arg:retVal][}][function-call]
+        [argument:VAL][statement][{][predefined-function:print][parameters][}]
+          [if-stmt][parameter]
+            [{][if][expression][then][statements][else][statements][}][function-call]
+              [{][comparison-operator:<][parameter:VAL][parameter][}][statement][statements][statement][{][function-name:facto][parameters][}]
+                [number:0][assignment-stmt][statement][while-stmt][parameter]
+                  [{][=][assignment-id:retVal][parameters][}][assignment-stmt][{][while][expression][do][statements][}][number:999]
+                    [parameter][{][=][assignment-id:retVal][parameters][}][{][comparison-operator:>][parameter:VAL][parameter][}][statements][statement]
+                      [number:-1][parameter][number:0][statement][assignment-stmt]
+                        [number:1][assignment-stmt][{][=][assignment-id:VAL][parameters][}]
+                          [{][=][assignment-id:retVal][parameters][}][parameter]
+                            [parameter][function-call]
+                              [function-call][{][predefined-function:-][parameters][}]
+                                [{][predefined-function:*][parameters][}][parameters][parameter]
+                                  [parameters][parameter:VAL][parameter:VAL][number:1]
+                                    [parameter:retVal]
 ### Output Interpretation
+Parse tree:
+[program]
+   _|__________________________________________________________________
+   |     |              |                    |                 |      |
+  [{][Program][program-name:Sample][Function-definitions][statements][}]
+              _______________________________|                 |
+              |               _________________________________|
+              |               |
+    [function-definition][statement]
+              |               |______________________________________________________________________
+       _______|_____________________________________________________________________________        |
+       |      |               |              |          |          |            |          |        |
+      [{][Function][function-name:facto][arguments][statements][return][return-arg:retVal][}][function-call]
+               ______________________________|          |                                           |
+               |            ____________________________|                                           |
+               |            |     __________________________________________________________________|
+               |            |     |             |                   |       |
+        [argument:VAL][statement][{][predefined-function:print][parameters][}]
+             _______________|                                       |
+             |          ____________________________________________|
+             |          |
+          [if-stmt][parameter]
+             |          |____________________________________________________
+             |_______________________________________________________       |
+             |   |      |        |        |        |        |       |       |
+            [{][if][expression][then][statements][else][statements][}][function-call]
+                        |                 |                 |               |________________________________________________________________
+                        |                 |                 |_____________________________________      |           |               |       |
+                        |                 |________________________________           |          |      |           |               |       |
+               _________|___________________________________________      |           |          |      |           |               |       |
+               |        |                   |               |      |      |           |          |      |           |               |       |
+              [{][comparison-operator:<][parameter:VAL][parameter][}][statement][statements][statement][{][function-name:facto][parameters][}]
+                    ________________________________________|             |           |          |                                  |
+                    |               ______________________________________|           |          |                                  |
+                    |               |           ______________________________________|          |                                  |
+                    |               |           |           _____________________________________|                                  |
+                    |               |           |           |           ____________________________________________________________|
+                    |               |           |           |           |
+                [number:0][assignment-stmt][statement][while-stmt][parameter]
+                                    |           |           |           |_____________________________________________________
+                                    |           |           |_________________________________________________________       |
+                                    |           |______________________        |    |        |       |       |       |       |
+                   _________________|_______________________          |        |    |        |       |       |       |       |
+                   |  |             |               |      |          |        |    |        |       |       |       |       |
+                  [{][=][assignment-id:retVal][parameters][}][assignment-stmt][{][while][expression][do][statements][}][number:999]
+                         ___________________________|                 |                      |               |_____________________________________
+                         |      ______________________________________|__  __________________|__________________________________       |          |
+                         |      |  |            |               |       |  |            |                  |            |      |       |          |
+                    [parameter][{][=][assignment-id:retVal][parameters][}][{][comparison-operator:>][parameter:VAL][parameter][}][statements][statement]
+                         |            __________________________|                                                       |              |          |
+                         |            |         ________________________________________________________________________|              |          |
+                         |            |         |          ____________________________________________________________________________|          |
+                         |            |         |          |            __________________________________________________________________________|
+                         |            |         |          |            |
+                      [number:-1][parameter][number:0][statement][assignment-stmt]
+                            __________|   _________________|            |
+                            |             |         ____________________|_________________
+                            |             |         |  |        |               |        |
+                        [number:1][assignment-stmt][{][=][assignment-id:VAL][parameters][}]
+                           _______________|_________________________      ______|
+                           |  |           |                 |      |      |
+                          [{][=][assignment-id:retVal][parameters][}][parameter]
+                                 ___________________________|             |
+                                 |            ____________________________|
+                                 |            |
+                            [parameter][function-call]
+                                 |            |______________________________________
+                                 |            |            |                |       |
+                              [function-call][{][predefined-function:-][parameters][}]
+                                 |______________________________________    |____________
+                                 |          |                   |      |    |           |
+                                [{][predefined-function:*][parameters][}][parameters][parameter]
+                                        ________________________|   ________|   ________|
+                                        |            |              |           |
+                                  [parameters][parameter:VAL][parameter:VAL][number:1]
+                                        |
+                                    [parameter:retVal]

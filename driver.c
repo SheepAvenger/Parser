@@ -45,8 +45,11 @@ void main()
     printf("\n");   
 	printBlocks(); 
     printf("\n");
-    printTree(root);
-    freeNode(root);
+    if(root)
+    {
+        printTree(root);
+        freeNode(root);
+    }
 }
 void printTree(tNode* p)
 {
@@ -59,7 +62,7 @@ void printTree(tNode* p)
     {
         t = dequeue();
         if(t == NULL){
-            printf("[]");
+            //printf("[]");   /* For debugging*/
         }    
         else if(t->type == nt)
         {
