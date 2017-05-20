@@ -17,7 +17,12 @@ Compiler: gcc 4.4.7, 5.4.0, 6.2.0
 ## Components and Functions
 * hash.h - The symbol table modified from Project 0
 * stack.h - The active scope number stack from Project 0
+* bTree.h - Header file for building a parse tree
+* scanner.h - Header file to allow FP.l, FP.y and driver.c to cross communicate
+* queue.h - Header file to build a queue for printing the parse tree
 * FP.l - The lex definition file from Project 1
+* FP.y - Yacc file for parsing tokens from lex, builds parse tree
+* driver.c - Main file that calls yyparse and prints the symbol table, active block stack and parse tree
 
 ## Constraint
 * The if statement in this language only allows if-then-else format.
