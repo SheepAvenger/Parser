@@ -7,8 +7,8 @@
 #include "hash.h"
 #include "FP.tab.h"
 #include "stack.h"
-#define DEBUG 0
-#define STDEBUG 0
+#define DEBUG 1
+#define STDEBUG 1
 
 void buildST(char*, char*);
 
@@ -36,7 +36,7 @@ SYMBOL      \{|\}|\(|\)|\=|\+|\-|\*|\/|\%|\=\=|\>|\<|\>\=|\<\=|\!\=
 %%
 {INT}       {yylval.strval = yytext; if(DEBUG){printf("[Lex] Integer: %s\n", yytext);}; buildST(yytext, "Integer"); return integer;}
 {FLOAT}     {yylval.strval = yytext; if(DEBUG){printf("[Lex] Float: %s\n", yytext);}; buildST(yytext, "Float"); return Float;}
-{KEYWORD}   {yylval.strval = yytext; if(DEBUG){printf("[Lex] Keyword: %s\n", yytext);}; buildST(yytext, "KeyWord"); if( strcmp(yytext, "Program") == 0)
+{KEYWORD}   {yylval.strval = yytext; if(DEBUG){printf("[Lex] Keyword: %s\n", yytext);}; if( strcmp(yytext, "Program") == 0)
 		return prog;
 	else if( strcmp(yytext, "Function") == 0)
 		return func;
@@ -61,10 +61,14 @@ SYMBOL      \{|\}|\(|\)|\=|\+|\-|\*|\/|\%|\=\=|\>|\<|\>\=|\<\=|\!\=
 {BOOLEAN}   {yylval.strval = yytext; if(DEBUG){printf("[Lex] Boolean: %s\n", yytext);}; buildST(yytext, "Boolean"); return Boolean;}
 {ID}        {yylval.strval = yytext; if(DEBUG){printf("[Lex] Identifier: %s\n", yytext);}; buildST(yytext, "Identifier"); return identifier;}
 {STRING}    {yylval.strval = yytext; if(DEBUG){printf("[Lex] char-String: %s\n", yytext);}; buildST(yytext, "Char-String"); return cString;}
-{SYMBOL}    { if(DEBUG){printf("[Lex] Special Symbol: %s\n", yytext);}; buildST(yytext, "Special Symbol"); if(strcmp(yytext, "{") == 0)
+{SYMBOL}    { if(DEBUG){printf("[Lex] Special Symbol: %s\n", yytext);}; if(strcmp(yytext, "{") == 0){
+		buildST(yytext, "scope");
 		return yytext[0];
-	else if( strcmp(yytext, "}") == 0)
+	     }
+	else if( strcmp(yytext, "}") == 0){
+		buildST(yytext, "scope");
 		return yytext[0];//return rBracket;
+	}
 	else if( strcmp(yytext, "(") == 0)
 		return yytext[0];//return lParen;
 	else if( strcmp(yytext, ")") == 0)
