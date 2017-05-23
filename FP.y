@@ -9,7 +9,6 @@
 int yylex();
 tNode* addLeaf(char*, char*);
 tNode* addNode(char*, int, ...);
-//void freeNode(tNode* p);
 int yyerror(char*);
 
 extern struct node* myNode;
@@ -34,7 +33,7 @@ tNode* root = NULL;
 //%right "then" "else"
 %%
 program: 
-    '{' prog program_name function_definitions statements '}' {if(DEBUG){printf("[Yacc] \nstart\n");}; $$=addNode("program",6, addLeaf("{", "{"), addLeaf("program", "Program"), $3, $4, $5, addLeaf("}", "}")); root = $$;}
+    '{' prog program_name function_definitions statements '}' {if(DEBUG){printf("[Yacc] \nstart\n");}; $$=addNode("program",6, addLeaf("{", NULL), addLeaf("Program", NULL), $3, $4, $5, addLeaf("}", NULL)); root = $$;}
     | error {printf("[Yacc] Failure :-(\n"); yyerrok; yyclearin;}
     ;
 program_name: 
@@ -42,11 +41,11 @@ program_name:
     | error {printf("[Yacc] Failure :-(\n"); yyerrok; yyclearin;}
     ;
 function_definitions: 
-    function_definitions function_definition    {if(DEBUG){printf("[Yacc] \nfunction-definitions\n\n\n");}; $$=addNode("Function-definitions",2, $1, $2);}
+    function_definitions function_definition    {if(DEBUG){printf("[Yacc] \nfunction-definitions\n\n\n");}; $$=addNode("function-definitions",2, $1, $2);}
     | {$$ = NULL;}
     ;
 function_definition:
-    '{' func function_name arguments statements ret return_arg '}'    {if(DEBUG){printf("[Yacc] \nfunction-definition\n\n\n");}; $$=addNode("function-definition", 8, addLeaf(NULL,"{"), addLeaf(NULL,"Function"), $3, $4, $5, addLeaf(NULL,"return"), $7, addLeaf(NULL,"}"));}
+    '{' func function_name arguments statements ret return_arg '}'    {if(DEBUG){printf("[Yacc] \nfunction-definition\n\n\n");}; $$=addNode("function-definition", 8, addLeaf("{", NULL), addLeaf("Function", NULL), $3, $4, $5, addLeaf("return", NULL), $7, addLeaf("}", NULL));}
     ;
 function_name: 
     identifier  {if(DEBUG){printf("[Yacc] \nfunction-name %s\n\n\n", $1);}; $$=addLeaf("function-name",$1);}
@@ -76,11 +75,11 @@ statement:
     | error {printf("[Yacc] Failure :-(\n"); yyerrok; yyclearin;}
     ;
 assignment_stmt:
-    '{' '=' Identifiers parameters '}'       {if(DEBUG){printf("[Yacc] \nassignment_stmt: \n\n\n");}; $$=addNode("assignment-stmt", 5, addLeaf("{", "{"), addLeaf("assignment-operator","="), $3, $4, addLeaf("}","}"));}
+    '{' '=' Identifiers parameters '}'       {if(DEBUG){printf("[Yacc] \nassignment_stmt: \n\n\n");}; $$=addNode("assignment-stmt", 5, addLeaf("{", NULL), addLeaf("assignment-operator","="), $3, $4, addLeaf("}", NULL));}
     ;
 function_call:
-    '{' function_name parameters '}'        {if(DEBUG){printf("[Yacc] \nfunction_call1\n\n\n");}; $$=addNode("function-call", 4, addLeaf(NULL,"{"), $2, $3, addLeaf(NULL,"}"));}
-    | '{' predefined_function parameters '}'  {if(DEBUG){printf("[Yacc] \nfunction_call2\n\n\n");}; $$=addNode("function-call", 4, addLeaf(NULL,"{"), $2, $3, addLeaf(NULL,"}"));}
+    '{' function_name parameters '}'        {if(DEBUG){printf("[Yacc] \nfunction_call1\n\n\n");}; $$=addNode("function-call", 4, addLeaf("{", NULL), $2, $3, addLeaf("}", NULL));}
+    | '{' predefined_function parameters '}'  {if(DEBUG){printf("[Yacc] \nfunction_call2\n\n\n");}; $$=addNode("function-call", 4, addLeaf("{", NULL), $2, $3, addLeaf("}", NULL));}
     ;
 predefined_function: 
     '+' 	    {if(DEBUG){printf("[Yacc] \nplus\n\n\n");}; $$=addLeaf("predefined-function", "+");}
@@ -107,10 +106,10 @@ number:
     | Float     {if(DEBUG){printf("[Yacc] \nnumber2: %s\n\n\n", $1);}; $$ = addLeaf("number", $1);}
     ;
 if_stmt:
-    '{' iif expression then statements els statements '}'   {if(DEBUG){printf("[Yacc] \nif_stmt\n\n\n");}; $$=addNode("if-stmt", 8, addLeaf(NULL,"{"), addLeaf(NULL,"if"), $3, addLeaf(NULL,"then"), $5, addLeaf(NULL,"else"), $7, addLeaf(NULL,"}"));}
+    '{' iif expression then statements els statements '}'   {if(DEBUG){printf("[Yacc] \nif_stmt\n\n\n");}; $$=addNode("if-stmt", 8, addLeaf("{", NULL), addLeaf("if", NULL), $3, addLeaf("then", NULL), $5, addLeaf("else", NULL), $7, addLeaf("}", NULL));}
     ;
 while_stmt:
-    '{' whle expression doo statements '}'  {if(DEBUG){printf("[Yacc] \nwhile_stmt\n\n\n");}; $$=addNode("while-stmt", 6, addLeaf(NULL,"{"), addLeaf(NULL,"while"), $3, addLeaf(NULL,"do"), $5, addLeaf(NULL,"}"));}
+    '{' whle expression doo statements '}'  {if(DEBUG){printf("[Yacc] \nwhile_stmt\n\n\n");}; $$=addNode("while-stmt", 6, addLeaf("{", NULL), addLeaf("while", NULL), $3, addLeaf("do", NULL), $5, addLeaf("}", NULL));}
     ;
 expression_id:
     function_call   {$$=addNode("expression-id", 1, $1);}
@@ -121,8 +120,8 @@ expression_id:
     | error {printf("[Yacc] Failure :-(\n"); yyerrok; yyclearin;}
     ;
 expression: 
-    '{' comparison_operator expression_id expression_id '}'   {if(DEBUG){printf("[Yacc] \nexpression1\n\n\n");}; $$=addNode("expression", 5, addLeaf(NULL,"{"), $2, $3, $4, addLeaf(NULL,"}"));}
-    | '{' Boolean_operator expression expression '}'  {if(DEBUG){printf("[Yacc] \nexpression2\n\n\n");}; $$=addNode("expression", 5, addLeaf(NULL,"{"), $2, $3, $4, addLeaf(NULL,"}"));}
+    '{' comparison_operator expression_id expression_id '}'   {if(DEBUG){printf("[Yacc] \nexpression1\n\n\n");}; $$=addNode("expression", 5, addLeaf("{", NULL), $2, $3, $4, addLeaf("}", NULL));}
+    | '{' Boolean_operator expression expression '}'  {if(DEBUG){printf("[Yacc] \nexpression2\n\n\n");}; $$=addNode("expression", 5, addLeaf("{", NULL), $2, $3, $4, addLeaf("}", NULL));}
     | Boolean   {if(DEBUG){printf("[Yacc] \nexpression3\n\n\n");}; $$=addLeaf("expression", $1);}
     | error {printf("[Yacc] Failure :-(\n"); yyerrok; yyclearin;}
     ;
@@ -143,16 +142,17 @@ Identifiers:
 %%
 tNode* addLeaf(char* label, char* ptr) 
 { 
-    long long key = 0;
-    key = getKey(ptr);
+    long long key = 0;   
     tNode *p; 
     if ((p = malloc(sizeof(tNode))) == NULL) 
         yyerror("malloc error"); 
     p->label = label;
     p->type = t; 
-	if(ptr[0] != '{' && ptr[0] != '}'&& ptr[0] != ')'&& ptr[0] != '('&& ptr[0] != '='&& ptr[0] != '+'&& ptr[0] != '-'
-	&& ptr[0] != '*'&& ptr[0] != '/'&& ptr[0] != '>'&& ptr[0] != '<'&& ptr[0] != '!'&& ptr[0] != '%')
-    		p->term.ptr = searchTable(key, ptr, label);
+	if(ptr)
+    {
+        key = getKey(ptr);
+        p->term.ptr = searchTable(key, ptr, label);
+    }
 	else
 		p->term.ptr = ptr; 
     {if(DEBUG)printf("Adding: %s, from: %s\n", p->term.ptr, label);}
@@ -163,7 +163,7 @@ tNode* addNode(char* label, int num_args, ...)
     va_list ap; 
     tNode *p; 
     int i; 
-    if ((p = malloc(sizeof(tNode) + (num_args-1) * sizeof(tNode *))) == NULL) 
+    if ((p = malloc(sizeof(tNode))) == NULL)
         yyerror("malloc error"); 
     p->label = label;
     p->type = nt; 
@@ -176,17 +176,6 @@ tNode* addNode(char* label, int num_args, ...)
 	p->nonTerm.child = myTemp;
     return p; 
 } 
-/*void freeNode(tNode* p) 
-{ 
-    int i; 
-    if (!p) return; 
-    if (p->type == nt) 
-    { 
-        for (i = 0; i < p->nonTerm.num_child; i++) 
-            freeNode(p->nonTerm.child[i]); 
-    }
-    free (p); 
-} */
 int yyerror(char *s)
 {
     //if(DEBUG){fprintf(stdout, "%s\n", s);

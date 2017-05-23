@@ -1,4 +1,3 @@
-//#include "lex.yy.c"
 #include<stdlib.h>
 #include<stdio.h>
 #include "bTree.h"
@@ -10,7 +9,6 @@ void printTree(tNode*);
 void freeNode(tNode*);
 int isPrime(int p);
 int prime;
-//tNode* root;
 
 void main()
 {
@@ -75,13 +73,17 @@ void printTree(tNode* p)
         }
         else
         {
-            if(t->label)
+            if(t->label && t->term.ptr)
             {
                 printf("[%s:%s]", t->label, t->term.ptr);
             }
-            else
+            else if(!t->label)
             {
                 printf("[%s]", t->term.ptr);
+            }
+            else
+            {
+                printf("[%s]", t->label);
             }
         }
         count--;
