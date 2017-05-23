@@ -1,0 +1,63 @@
+========= Finished reading the input file =========
+
+Data at index 0 in Symbol Table:
+Scope	Type                 Value
+---------------------------------------
+13      function-name        facto
+1       function-name        facto
+
+Data at index 8 in Symbol Table:
+Scope	Type                 Value
+---------------------------------------
+1       return-arg           retVal
+8       parameter            retVal
+5       assignment-id        retVal
+4       assignment-id        retVal
+
+Data at index 10 in Symbol Table:
+Scope	Type                 Value
+---------------------------------------
+1       parameter            VAL
+
+Data at index 12 in Symbol Table:
+Scope	Type                 Value
+---------------------------------------
+13      number               999
+4       number               -1
+
+Data at index 14 in Symbol Table:
+Scope	Type                 Value
+---------------------------------------
+7       number               0
+3       number               0
+
+Data at index 15 in Symbol Table:
+Scope	Type                 Value
+---------------------------------------
+11      number               1
+5       number               1
+
+Data at index 16 in Symbol Table:
+Scope	Type                 Value
+---------------------------------------
+0       program-name         Sample
+
+
+[program]
+  [{][Program][program-name:Sample][function-definitions][statements][}]
+    [function-definition][statement]
+      [{][Function][function-name:facto][arguments][statements][return][return-arg:retVal][}][function-call]
+        [argument:VAL][statement][{][predefined-function:print][parameters][}]
+          [if-stmt][parameter]
+            [{][if][expression][then][statements][else][statements][}][function-call]
+              [{][comparison-operator:<][expression-id:VAL][expression-id][}][statement][statements][statement][{][function-name:facto][parameters][}]
+                [number:0][assignment-stmt][statement][while-stmt][parameter]
+                  [{][assignment-operator:=][assignment-id:retVal][parameter][}][assignment-stmt][{][while][expression][do][statements][}][number:999]
+                    [number:-1][{][assignment-operator:=][assignment-id:retVal][parameter][}][{][comparison-operator:>][expression-id:VAL][expression-id][}][statements][statement]
+                      [number:1][number:0][statement][assignment-stmt]
+                        [assignment-stmt][{][assignment-operator:=][assignment-id:VAL][parameter][}]
+                          [{][assignment-operator:=][assignment-id:retVal][parameter][}][function-call]
+                            [function-call][{][predefined-function:-][parameters][}]
+                              [{][predefined-function:*][parameters][}][parameters][parameter]
+                                [parameters][parameter:VAL][parameter:VAL][number:1]
+                                  [parameter:retVal]

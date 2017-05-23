@@ -1,0 +1,49 @@
+========= Finished reading the input file =========
+
+Data at index 0 in Symbol Table:
+Scope	Type                 Value
+---------------------------------------
+5       parameter            (pound t)
+5       assignment-id        result
+4       parameter            (pound f)
+4       assignment-id        result
+
+Data at index 1 in Symbol Table:
+Scope	Type                 Value
+---------------------------------------
+7       function-name        getEle
+1       function-name        getEle
+
+Data at index 5 in Symbol Table:
+Scope	Type                 Value
+---------------------------------------
+0       program-name         Samp2
+
+Data at index 8 in Symbol Table:
+Scope	Type                 Value
+---------------------------------------
+1       return-arg           lst
+1       expression-id        index
+
+Data at index 9 in Symbol Table:
+Scope	Type                 Value
+---------------------------------------
+7       parameter            (abc)
+
+Data at index 11 in Symbol Table:
+Scope	Type                 Value
+---------------------------------------
+7       number               2
+
+
+[program]
+  [{][Program][program-name:Samp2][function-definitions][statements][}]
+    [function-definition][statement]
+      [{][Function][function-name:getEle][arguments][statements][return][return-arg:lst][}][function-call]
+        [arguments][argument:lst][statement][{][predefined-function:print][parameters][}]
+          [argument:index][if-stmt][parameter]
+            [{][if][expression][then][statements][else][statements][}][function-call]
+              [{][comparison-operator:!=][expression-id:index][expression-id:lst][}][statement][statement][{][function-name:getEle][parameters][}]
+                [assignment-stmt][assignment-stmt][parameters][parameter:(abc)]
+                  [{][assignment-operator:=][assignment-id:result][parameter:(pound f)][}][{][assignment-operator:=][assignment-id:result][parameter:(pound t)][}][parameter]
+                    [number:2]

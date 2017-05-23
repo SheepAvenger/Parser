@@ -1,4 +1,5 @@
-# Project Phase 2 - Syntax analysis (Due on May 22)
+# Project Phase 2 - Syntax analysis
+
 ## Team Members
 kw5854 - Robert McCook
 pg4425 - Jon Quianzon
@@ -20,17 +21,16 @@ Compiler: gcc 4.4.7, 5.4.0, 6.2.0
 * bTree.h - Header file for building a parse tree
 * scanner.h - Header file to allow FP.l, FP.y and driver.c to cross communicate
 * queue.h - Header file to build a queue for printing the parse tree
-* FP.l - The lex definition file from Project 1
+* FP.l - The lex definition modified from Project 1
 * FP.y - Yacc file for parsing tokens from lex, builds parse tree
 * driver.c - Main file that calls yyparse and prints the symbol table, active block stack and parse tree
 
 ## Constraint
-* The if statement in this language only allows if-then-else format.
 * This program is fully tested in Ubuntu. We assume this program will work in Linux-like systems, but not in Windows-like systems.
 
 ## Compile and Run in Linux
 Put all the files in the same directory 
-Launch a Terminal, navigate to the directory that contains the files described above, execute following command
+Launch a Terminal, navigate to the directory that contains the files described above, execute following commands
 ```
 flex FP.l
 bison -d FP.y
@@ -42,76 +42,53 @@ Execute the program with an input sample file
 ```
 
 ## Test
-### Input
-See sample.fp
-### Output
+### Input - sample.fp
+{Program Sample
+    {Function facto VAL
+        {if {< VAL 0 }
+        then {= retVal -1}
+        else {= retVal 1}
+            {while {> VAL 0} do
+                {= retVal {* retVal VAL}}
+                {= VAL {- VAL 1}}
+            }
+        }
+        return retVal
+    }
+    {print {facto 999}}
+}
+### Output - output.txt
 ========= Finished reading the input file =========
 
 Data at index 0 in Symbol Table:
 Scope	Type                 Value
 ---------------------------------------
 13      function-name        facto
-6       KeyWord              while
-2       KeyWord              if
 1       function-name        facto
-
-Data at index 3 in Symbol Table:
-Scope	Type                 Value
----------------------------------------
-0       KeyWord              Program
-
-Data at index 7 in Symbol Table:
-Scope	Type                 Value
----------------------------------------
-1       KeyWord              return
 
 Data at index 8 in Symbol Table:
 Scope	Type                 Value
 ---------------------------------------
 1       return-arg           retVal
-9       predefined-function  *
 8       parameter            retVal
 5       assignment-id        retVal
 4       assignment-id        retVal
 
-Data at index 9 in Symbol Table:
-Scope	Type                 Value
----------------------------------------
-3       comparison-operator  <
-
 Data at index 10 in Symbol Table:
 Scope	Type                 Value
 ---------------------------------------
-10      assignment-operator  =
-8       assignment-operator  =
-5       assignment-operator  =
-2       KeyWord              else
-4       assignment-operator  =
 1       parameter            VAL
-
-Data at index 11 in Symbol Table:
-Scope	Type                 Value
----------------------------------------
-11      predefined-function  -
-7       comparison-operator  >
 
 Data at index 12 in Symbol Table:
 Scope	Type                 Value
 ---------------------------------------
 13      number               999
 4       number               -1
-1       KeyWord              Function
-
-Data at index 13 in Symbol Table:
-Scope	Type                 Value
----------------------------------------
-12      predefined-function  print
 
 Data at index 14 in Symbol Table:
 Scope	Type                 Value
 ---------------------------------------
 7       number               0
-2       KeyWord              then
 3       number               0
 
 Data at index 15 in Symbol Table:
@@ -123,7 +100,6 @@ Scope	Type                 Value
 Data at index 16 in Symbol Table:
 Scope	Type                 Value
 ---------------------------------------
-6       KeyWord              do
 0       program-name         Sample
 
 
@@ -147,7 +123,9 @@ Scope	Type                 Value
                                   [parameter:retVal]
 
 ### Output Interpretation
-Parse tree:
+For better reading the tree structure, please use Notepad or Notepad++ with the Word wrap option off.
+Each node is in square brackets []
+The parse tree structure of the output can be interpreted as below:
 Depth
  0    [program]
          _|__________________________________________________________________

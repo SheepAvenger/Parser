@@ -5,6 +5,7 @@
 #include "scanner.h"
 #include "queue.h"
 #define DEBUG 0
+
 void printTree(tNode*);
 void freeNode(tNode*);
 int isPrime(int p);
@@ -77,13 +78,13 @@ void printTree(tNode* p)
             {
                 printf("[%s:%s]", t->label, t->term.ptr);
             }
-            else if(!t->label)
-            {
-                printf("[%s]", t->term.ptr);
-            }
-            else
+            else if(t->label)
             {
                 printf("[%s]", t->label);
+            }
+            else if(t->term.ptr)
+            {
+                printf("[%s]", t->term.ptr);
             }
         }
         count--;

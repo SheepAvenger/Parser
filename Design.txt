@@ -1,0 +1,2 @@
+* By design, the if statement in this FP language only allows if-then-else format. Missing else will lead to parse errors.
+* The symbol table output prints the scope first, followed by the identifer type, then followed by the identifer name.

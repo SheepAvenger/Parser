@@ -7,8 +7,8 @@
 #include "hash.h"
 #include "FP.tab.h"
 #include "stack.h"
-#define DEBUG 1
-#define STDEBUG 1
+#define DEBUG 0
+#define STDEBUG 0
 
 void buildST(char*, char*);
 
@@ -19,7 +19,6 @@ struct node* myNode = NULL;
 int scope = 0;
 long long key = 0;
 extern int prime;
-
 %}
 /* 1.2 identifier, integer, float, character-string, Boolean */
 ID          [a-zA-Z][a-zA-Z0-9]{0,5}
@@ -198,7 +197,7 @@ char* searchTable(long long hashIndex, char* myString, char* myType)
 	{
 		if(strcmp(myNode->Id, myString) == 0)
 		{
-			printf("id: %s  myString: %s\n", myNode->Id, myString);
+			//printf("id: %s  myString: %s\n", myNode->Id, myString);
 			myNode->type = (myType == NULL || strcmp(myType, "program") == 0 ? myNode->type : myType);
 			return myNode->Id;
 		}

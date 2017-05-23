@@ -1,0 +1,27 @@
+========= Finished reading the input file =========
+
+Data at index 6 in Symbol Table:
+Scope	Type                 Value
+---------------------------------------
+3       function-name        myStrn
+1       assignment-id        myStrn
+
+Data at index 8 in Symbol Table:
+Scope	Type                 Value
+---------------------------------------
+1       parameter            (I like lex and yacc)
+
+Data at index 9 in Symbol Table:
+Scope	Type                 Value
+---------------------------------------
+0       program-name         Samp3
+
+
+[program]
+  [{][Program][program-name:Samp3][statements][}]
+    [statements][statement]
+      [statement][function-call]
+        [assignment-stmt][{][predefined-function:print][parameters][}]
+          [{][assignment-operator:=][assignment-id:myStrn][parameter:(I like lex and yacc)][}][parameter]
+            [function-call]
+              [{][function-name:myStrn][}]

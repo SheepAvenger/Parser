@@ -1,0 +1,50 @@
+========= Finished reading the input file =========
+
+Data at index 1 in Symbol Table:
+Scope	Type                 Value
+---------------------------------------
+0       program-name         Samp1
+
+Data at index 4 in Symbol Table:
+Scope	Type                 Value
+---------------------------------------
+1       parameter            vals
+
+Data at index 5 in Symbol Table:
+Scope	Type                 Value
+---------------------------------------
+5       function-name        setVal
+1       function-name        setVal
+
+Data at index 6 in Symbol Table:
+Scope	Type                 Value
+---------------------------------------
+3       assignment-id        myStrn
+
+Data at index 8 in Symbol Table:
+Scope	Type                 Value
+---------------------------------------
+3       parameter            (I like lex and yacc)
+
+Data at index 11 in Symbol Table:
+Scope	Type                 Value
+---------------------------------------
+1       return-arg           val
+2       assignment-id        val
+
+Data at index 12 in Symbol Table:
+Scope	Type                 Value
+---------------------------------------
+5       number               99
+
+
+[program]
+  [{][Program][program-name:Samp1][function-definitions][statements][}]
+    [function-definition][statements][statement]
+      [{][Function][function-name:setVal][arguments][statements][return][return-arg:val][}][statement][function-call]
+        [argument:vals][statement][assignment-stmt][{][predefined-function:print][parameters][}]
+          [assignment-stmt][{][assignment-operator:=][assignment-id:myStrn][parameter:(I like lex and yacc)][}][parameter]
+            [{][assignment-operator:=][assignment-id:val][parameter:vals][}][function-call]
+              [{][function-name:setVal][parameters][}]
+                [parameter]
+                  [number:99]
